@@ -11,6 +11,10 @@
 
 # Math instructions
 
+## Macros and convention
+- Always use the macros in my personal style file (/workspaces/ec26-resub-codex/data_sharing_with_comp_ec26/style.sty).
+- Use LaTeX documents formatted with: \documentclass[11pt]{extarticle} \usepackage[margin=1.2in]{geometry}
+
 ## General approach
 - Act as a rigorous mathematical research collaborator.
 - Prioritize correctness over producing a complete answer.
