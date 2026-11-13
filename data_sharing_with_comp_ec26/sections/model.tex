@@ -1,0 +1,696 @@
+\section{Model}
+\label{sec:model}
+
+% We state our model in two parts. First, we define our environment to capture how competitors value
+% each others' resources, how competition influences their willingness to exchange, and how to quantify
+% the quality of an exchange. In the second section, we give a precise definition of a resource 
+% exchange algorithm under a particular environment and its potential properties
+% (e.g. optimality, individual rationality, and incentive compatibility).
+
+We now present our model. In Section~\ref{sec:modelenv} we define the environment, which describes how competitors value each other's 
+resources, how competition affects their willingness to trade, and how to evaluate the quality of an exchange. 
+In Section~\ref{sec:modelalgo} we formally define a resource exchange algorithm within this environment and outline its desirable properties, 
+such as optimality, individual rationality, and incentive compatibility.
+
+\subsection{Environment}
+\label{sec:modelenv}
+
+\paraheadwnogap{Agents, valuations, and utilities}
+There are two competitors $\competitora$ and $\competitorb$, each possessing 
+a collection of $\numdatab$ and $\numdataa$ goods respectively, that the other competitor values.
+Let \(
+    \cbr{
+        \valai
+    }_{\numdatafora=0}^\numdataa,
+    \big\{
+        \valbj
+    \big\}_{\numdataforb=0}^\numdatab
+\) be a sequence of random variables, drawn independently from distributions $\priora, \priorb$, 
+where $\valai$ denotes how much player $a$ values $i$ goods from $b$ and likewise for $\valbj$.
+Although we assume the sequences are independent of each other, i.e. $\valai \perp \valbj$ for all $i,j$, 
+each sequence could be correlated, $\valaii{i_1} \not\perp \valaii{i_2}$ for all $i_1,i_2$.
+For convenience, we will take $\valaii{0} = \valbjj{0} = 0$.
+Finally, while the distributions
+$\priora,\priorb$,
+%  $\prior$ 
+are public information, neither player knows the realizations of their valuations
+\(
+    \cbr{
+        \valai
+    }_{\numdatafora=1}^\numdataa,
+    \big\{
+        \valbj
+    \big\}_{\numdataforb=1}^\numdatab
+\)
+until the corresponding number of goods have been exchanged.
+
+% \[
+% \vala:\cbr{0,\ldots,\numdataa}\rightarrow\RR
+% \quad
+% \text{and} 
+% \quad
+% \valb:\cbr{0,\ldots,\numdatab}\rightarrow\RR 
+% \]
+% be two independent random valuation functions, capturing how much each competitor values a particular number of 
+% resources received from the other.
+% Equivalently, we can view these two functions as two sequence of random variables
+% \(
+%     \cbr{
+%         \valai
+%     }_{\numdatafora=0}^\numdataa,
+%     \big\{
+%         \valbj
+%     \big\}_{\numdataforb=0}^\numdatab
+% \)
+% that are independent from 
+% each other. For convenience, assume that 
+% \(
+%     \valaii{0}
+%     =
+%     \valbjj{0}
+%     =
+%     0
+% \), 
+% i.e. competitors derive no value from each others' resources when none are shared.
+
+% Suppose that there are two competitors $\competitora$ and $\competitorb$, each possessing 
+% a collection of $\numdatab$ and $\numdataa$ different resources
+% respectively, that the other competitor values. Let 
+% \[
+% \vala:\cbr{0,\ldots,\numdataa}\rightarrow\RR
+% \quad
+% \text{and} 
+% \quad
+% \valb:\cbr{0,\ldots,\numdatab}\rightarrow\RR 
+% \]
+% be two independent random valuation functions, capturing how much each competitor values a particular number of 
+% resources received from the other.
+% Equivalently, we can view these two functions as two sequence of random variables
+% \(
+%     \cbr{
+%         \valai
+%     }_{\numdatafora=0}^\numdataa,
+%     \big\{
+%         \valbj
+%     \big\}_{\numdataforb=0}^\numdatab
+% \)
+% that are independent from 
+% each other. For convenience, assume that 
+% \(
+%     \valaii{0}
+%     =
+%     \valbjj{0}
+%     =
+%     0
+% \), 
+% i.e. competitors derive no value from each others' resources when none are shared.
+
+Let $\setexchanges=\cbr{0,\ldots,\numdataa}\times\cbr{0,\ldots,\numdatab}$
+denote the set of possible exchanges, where
+\(
+    \rbr{\numdatafora,\numdataforb}\in\setexchanges
+\)
+represents $\competitora$ receiving $\numdatafora$ of $\competitorb$'s resources and 
+$\competitorb$ receiving $\numdataforb$ of $\competitora$'s resources.
+Because $\competitora$ and $\competitorb$ are in competition, we assume their utilities under 
+an exchange $\exchange = (i,j)\in\setexchanges$ are functions of both their own value and the value the other agent derives from the exchange.
+Concretely,
+let
+\(
+% \(
+    \utilas = \utila\big(\valai,\valbj\big)
+% \)
+%\quad
+\text{ and }
+%\quad
+% \(
+    \utilbs = \utilb\big(\valai,\valbj\big)
+% \)
+\)
+be the utilities for both agents under an exchange $\exchange\in\setexchanges$
+where
+\(
+    \utila,\utilb:\RR^2\rightarrow\RR
+\)
+are bounded functions. 
+For notational convenience,
+we will denote $\utilass{0} = \utilass{(0,0)}=0$ and
+$\utilbss{0} = \utilbss{(0,0)}=0$.
+% we 
+% assume
+% \(
+%     \utilass{0}
+%     =
+%     \utilbss{0}
+%     =0
+% \)
+% and let the subscript $0$ refer to $(0,0)$.
+
+This interaction between the two agents may be non-zero-sum (i.e. $\utilas \neq -\utilbs$).
+Moreover, utility gains for the agents may be asymmetric;
+for example, we could have
+% \[
+\(
+    \utila(x,y)=x-\frac{1}{10}y
+\)
+% \quad
+% \text{and}
+and
+% \quad
+\(
+    \utilb(x,y)=y-\frac{1}{3}x
+\),
+% \]
+reflecting a scenario in which $\competitora$ is more sensitive to aiding $\competitorb$ than
+vice versa.
+Moreover, while the canonical use case of interest involves negative externalities due to competition (i.e. $\utila$ decreases in $\valbj$), 
+our model and methods do not preclude positive externalities (i.e. $\utila$ may increase with $\valbj$).
+
+
+
+
+\parahead{Welfare}
+% To quantify social benefit due to an exchange, 
+To quantify the quality of an exchange,
+we introduce a bounded welfare function
+\(
+    \welfarefunc:\RR^2\rightarrow\RR
+\).
+We then define the welfare of an exchange $\exchange\in\setexchanges$ to be the random variable
+\(
+    \rewards
+    =
+    \welfarefunc\rbr{
+        \utilas,\utilbs
+    }
+\).
+For convenience, we will assume
+\(
+    \welfarefunc\rbr{0,0}=0
+\).
+Common examples of welfare functions  include the egalitarian welfare~\citep{mas1995microeconomic}
+$\welfarefunc(x,y)=\min(x,y)$, the 
+Nash welfare~\citep{nash1950bargaining} $W(x,y)=xy$, or the social welfare subject to individual rationality 
+$\welfarefunc(x,y)=(x+y) 1_{\cbr{x,y\geq 0}}$.
+
+
+
+
+In the definitions above, and going forward, we assume all functions are measurable unless stated otherwise.
+Using the components above we define an exchange environment.
+
+\begin{restatable}{definition}{def:exchange-environment}
+    An exchange environment is a tuple
+    \(
+        \rbr{
+            \cbr{
+                \valai
+            }_{\numdatafora=0}^\numdataa,
+            \big\{
+                \valbj
+            \big\}_{\numdataforb=0}^\numdatab,
+            \utila,
+            \utilb,
+            \welfarefunc
+        }
+    \),
+    where
+    \(
+        \cbr{
+            \valai
+        }_{\numdatafora=0}^\numdataa
+    \)
+    and
+    \(
+        \big\{
+            \valbj
+        \big\}_{\numdataforb=0}^\numdatab,
+    \)
+    are independent sequences drawn from priors $\priora, \priorb$,
+    \(
+        \utila,\utilb,\welfarefunc : \RR^2\rightarrow\RR
+    \)
+    are bounded functions, 
+    and all variables are normalized to zero as described above.
+    % and 
+    % \(
+    %     \valaii{0},
+    %     % =
+    %     \valbjj{0},
+    %     % =
+    %     \utilass{0},
+    %     % \utila(0,0),
+    %     % =
+    %     \utilbss{0},
+    %     % \utilb(0,0),
+    %     % =
+    %     \welfarefunc(0,0),
+    %     =0
+    % \)
+\end{restatable}  
+
+\subsection{Algorithm Definiton and Properties}
+\label{sec:modelalgo}
+
+% \parahead{fe}
+\parahead{Algorithm description}
+Before formally defining an exchange algorithm, we first describe how an algorithm interacts with the agents.
+First the algorithm will be published and agents will decide whether they wish to participate.
+% in the data sharing process that the algorithm will compute. 
+If both agents opt in, then the algorithm
+will propose a first exchange 
+\(
+    \algstatett{1}
+    =
+    \rbr{
+        \numdataforatt{1},
+        \numdataforbtt{1}
+    }\in\setexchanges 
+\)
+where $\competitora$ will receive $\numdataforatt{1}$ of $\competitorb$'s resources and 
+$\competitorb$ will receive $\numdataforbtt{1}$ of $\competitora$'s resources.
+After this exchange both agents truthfully report their observed values for 
+each others' resources, 
+\(
+    \valaii{
+        \numdataforatt{1}
+    },
+    \valbjj{
+        \numdataforbtt{1}
+    }
+\).
+Using this feedback, the algorithm will determine whether to terminate or propose another 
+exchange 
+\(
+    \algstatett{2}
+    =\rbr{
+        \numdataforatt{2},
+        \numdataforbtt{2}
+    }\in\setexchanges 
+\).
+The process repeats until the algorithm terminates with a final exchange of 
+\(
+    \algstatett{
+        \algendtime
+    }
+    =\rbr{
+        \numdataforatt{\algendtime},
+        \numdataforbtt{\algendtime}
+    }\in\setexchanges 
+\).
+We require that exchanges are increasing\footnote{%
+When we write $\rbr{x_1,y_1}\leq\rbr{x_2,y_2}$, we mean
+\(x_1\leq x_2\), and \(y_1\leq y_2\).
+When we write $\rbr{x_1,y_1}<\rbr{x_2,y_2}$, then at least one of the two inequalities holds strictly.
+}, meaning $\algstatett{t} > \algstatett{t-1}$,
+to reflect that resources cannot be unshared and that on each round the exchange algorithm does not terminate, at least one agent must receive an additional good.
+We now formally define an exchange algorithm.
+
+\begin{restatable}[Algorithm]{definition}{exchange-alg}
+    \label{def:exchange-alg}
+    \emph{A resource exchange algorithm is a tuple
+    \(
+        \rbr{
+            \cbr{
+                \algstatemapt
+            % }_{\timeind\geq 1}, 
+            }_{\timeind\geq 0}, 
+            \cbr{
+                \algstopmapt
+            }_{\timeind\geq 0}
+        }
+    \)
+    % of sequence of measurable functions
+    where
+    % The first sequence
+    \begin{align*}
+        \algstatemapt\rbr{
+            \cbr{
+                \valaii{
+                    k
+                }
+            }_{k=0}^{
+                % \numdataforatt{t-1}
+                \numdataforatt{t}
+            },
+            \cbr{
+                \valbjj{
+                    k
+                }
+            }_{k=0}^{
+                % \numdataforbtt{t-1}
+                \numdataforbtt{t}
+            }
+        }
+        =
+        \rbr{
+            \numdataforatt{\timeind+1},
+            \numdataforbtt{\timeind+1}
+        }
+        =
+        \algstatett{\timeind+1}
+        \in\NN^2_{\geq 0}
+        \quad
+        \text{s.t.}
+        \quad
+        \algstatet
+        <
+        \algstatett{t+1}
+        \quad
+        \rbr{
+            \text{here }
+            \algstatett{0}
+            =
+            \rbr{
+                \numdataforatt{0},\numdataforbtt{0}
+            }
+            =
+            (0,0)
+        }
+    \end{align*}     
+    % is a sequence of 
+    is a sequence of 
+    mappings, each from values realized for previous exchanges, to a larger exchange,
+    and
+    % \(
+    %     \algstopmapt
+    %     :
+    %     % \RR^{2\timeind}
+    %     \RR^{\numdataforatt{t}+1}
+    %     \times
+    %     \RR^{\numdataforbtt{t}+1}
+    %     \rightarrow \cbr{0,1}
+    % \)
+    \[
+        \algstopmapt
+        \rbr{
+            \cbr{
+                \valaii{
+                    k
+                }
+            }_{k=0}^{
+                \numdataforatt{t}
+            },
+            \cbr{
+                \valbjj{
+                    k
+                }
+            }_{k=0}^{
+                \numdataforbtt{t}
+            }
+        }
+        \in\cbr{0,1}
+    \]
+    is a 
+    sequence of decisions on whether to terminate proposing exchanges.
+    We define
+    % \[
+    %     \algendtime
+    %     =\inf\cbr{
+    %         t\in\NN_{\geq 0} :
+    %         \delta_{\timeind}\rbr{
+    %             \cbr{
+    %                 \valaii{k},
+    %                 \valbjj{k}
+    %             }_{k=0}^{\timeind-1} 
+    %         }=0
+    %     }
+    % \] 
+    \[
+        \algendtime
+        =\inf\cbr{
+            t\in\NN_{\geq 0} :
+            \delta_{\timeind}\rbr{
+                \cbr{
+                    \valaii{k}
+                }_{k=0}^{\numdataforatt{t}}
+                ,
+                \cbr{
+                    \valbjj{k}
+                }_{k=0}^{\numdataforbtt{t}}
+            }=0
+        }
+    \] 
+    to be the time exchanging is discontinued, 
+    % and require $\algendtime$ is finite. 
+    and require
+    \(
+        \algstatett{
+            \algendtime
+        }
+        \leq (\numdataa,\numdatab)
+    \), i.e. the final exchange does not exceed the resources competitors possess.
+    Let $\classalgs$ denote the set of all resource exchange algorithms. }
+\end{restatable}
+
+% Going forward, expectations $\EE$ will be with respect to the distribution of realized valuations $\vala_{i_t}, \valb_{j_t}$, welfares $\{\rewards\}_s$, and 
+% decisions $\{\algstatett{t}\}_t$ due to the interaction between an algorithm $\alg$ and environment under the priors $\priora, \priorb$.
+% If we wish to emphasize the dependence of $\EE$ under an algorithm $\alg$, we will write $\EE_\alg$.
+% For a specified environment, the goal of the algorithm designer is to propose an algorithm 
+% $\alg\in\classalgs$ to maximize the expected welfare of the final exchange,
+% \(
+%     \EE\sbr{
+%         \rewardss{\algstatett{
+%             \algendtime}
+%         }
+%     }
+% \).
+
+\parahead{Algorithm properties}
+We now introduce desirable properties than an exchange algorithm can possess. The first such property is optimality. 
+We say that an algorithm is optimal if there is no other algorithm with a higher expected welfare.
+
+\begin{restatable}{definition}{welfare-of-alg-and-opt-alg}
+    For an algorithm
+    \(
+        \alg
+        =
+        \rbr{
+            \cbr{
+                \algstatemapt
+            }_{\timeind\geq 0}, 
+            \cbr{
+                \algstopmapt
+            }_{\timeind\geq 0}
+        }
+        \in\classalgs
+    \)
+    we define its expected welfare to be that of the final exchange,
+    \(
+        \EE\sbr{
+            \rewardss{
+                \algstatett{\algendtime}
+            }
+        }
+    \).
+    We say that an algorithm $\alg$ is optimal if
+    \begin{align*}
+        % \EE_\alg\sbr{
+        \EE\sbr{
+            \rewardss{
+                \algstatett{\algendtime}
+            }
+        }
+        =
+        \sup_{
+            \alg'\in\classalgs
+        }
+        % \EE_{\alg'}\sbr{
+        \EE\sbr{
+            \rewardss{
+                \algstatett{\algendtime'}'
+            }
+        } .
+    \end{align*} 
+\end{restatable}  
+
+% In otherwords, an algorithm is optimal if there is no other algorithm with a higher expected 
+% welfare. 
+% The goal of a benevolent algorithm designer
+% is to find an optimal $\alg\in\classalgs$ 
+% to maximize the benefit of competitors collaborating
+% by maximizing the expected welfare.
+% Ideally the algorithm designer would like to propose an optimal exchange algorithm.
+% % to maximize the benefit of competitors collaborating
+% by maximizing the expected welfare.
+% However, it is a priori not obvious if or when there exists an optimal resource exchange algorithm, 
+% and if it does, how to go about finding it. 
+
+Our second property for an algorithm is individual rationality and is defined as follows.
+% Additionally, we would like to ensure that under the proposed algorithm is individually rational for both agents
+% as defined below.
+
+\begin{restatable}{definition}{ir-exchange-alg}
+    An algorithm $\alg\in\classalgs$ is individually rational (IR) if 
+    $\EE[\utilass{ \algstatett{\algendtime}
+            }] \geq 0$
+    and
+    $\EE[\utilbss{ \algstatett{\algendtime}
+            }] \geq 0$.
+    % \begin{align*}
+    % \(
+    %     0
+    %     \leq
+    %     \EE\sbr{
+    %         \utilass{ \algstatett{\algendtime}
+    %         }
+    %     },
+    %     \EE\sbr{
+    %         \utilbss{
+    %             \algstatett{\algendtime}
+    %         }
+    %     }
+    % \).
+\end{restatable}  
+
+%\kkcomment{State $\EE_A$ and that we wil drop goig forward.}
+
+Thus far, we have assumed that once an algorithm is published competitors either opt in or out of the 
+algorithm for the entire duration. However, in some real-world use cases, agents may exit the collaboration early. This is a potential issue when one competitor 
+benefits significantly from collaboration early on and determines it would only serve their 
+competitor by continuing to participate. An algorithm which has the property that competitors are 
+never incentivized to leave the collaboration early (prior to the algorithm terminating) is
+called incentive compatible (IC). This is made precise in the following definition.
+
+\begin{restatable}{definition}{ic-exchange-alg}
+    % We say that an algorithm 
+    \label{def:ic-exchange-alg}
+    Let
+    \(
+        \alg
+        =
+        \rbr{
+            \cbr{
+                \algstatemapt
+            }_{\timeind\geq 0}, 
+            \cbr{
+                \algstopmapt
+            }_{\timeind\geq 0}
+        }
+        \in\classalgs
+    \) be an algorithm, 
+    and let
+    % is incentive compatible if for any alternate sequence of stopping decisions
+    \(
+        \cbr{
+            \altalgstopmapt
+        }_{\timeind\geq 0}
+    \)
+    be an alternate sequence of stopping decisions, i.e.
+    \[
+        \altalgstopmapt
+        \rbr{
+            \cbr{
+                \valaii{
+                    k
+                }
+            }_{k=0}^{
+                \numdataforatt{t}
+            },
+            \cbr{
+                \valbjj{
+                    k
+                }
+            }_{k=0}^{
+                \numdataforbtt{t}
+            }
+        }
+        \in\cbr{0,1}
+        \quad
+        \text{and}
+        \quad
+        \altalgendtime
+        =\inf\cbr{
+            t\in\NN_{\geq 0} :
+            \altalgstopmaptt{\timeind}\rbr{
+                \cbr{
+                    \valaii{k}
+                }_{k=0}^{\numdataforatt{t}}
+                ,
+                \cbr{
+                    \valbjj{k}
+                }_{k=0}^{\numdataforbtt{t}}
+            }=0
+        } .
+    \]
+    We say $\alg$ is incentive compatible if for any choice of 
+    \(
+        \cbr{
+            \altalgstopmapt
+        }_{\timeind\geq 0}
+    \)
+    we have
+    \[
+        \EE\sbr{
+            \utilass{
+                \algstatett{
+                    \algendtime\wedge\altalgendtime
+                }
+            }
+        }
+        \leq
+        \EE\sbr{
+            \utilass{
+                \algstatett{
+                    \algendtime
+                }
+            }
+        }
+        \quad
+        \text{and}
+        \quad
+        \EE\sbr{
+            \utilbss{
+                \algstatett{
+                    \algendtime\wedge\altalgendtime
+                }
+            }
+        }
+        \leq
+        \EE\sbr{
+            \utilbss{
+                \algstatett{
+                    \algendtime
+                }
+            }
+        } .
+    \] 
+    Let $\classicalgs$ denote the set of IC exchange algorithms.
+    We say that $\alg\in\classicalgs$ is IC optimal if
+    \[
+        \EE\sbr{
+            \rewardss{
+                \algstatett{\algendtime}
+            }
+        }
+        =
+        \sup_{
+            \altalg\in\classicalgs
+        }
+        \EE\sbr{
+            \rewardss{
+                \algstatett{\algendtime'}'
+            }
+        } .
+    \]
+\end{restatable}  
+
+In the definition above, any 
+\(
+    \cbr{
+        \altalgstopmapt
+    }_{\timeind\geq 0}
+\)
+can be viewed as a sequence of decisions a competitor makes on whether to exit the collaboration or
+continue participating.
+With this interpretation,
+% In the definition above, 
+\(
+    \algendtime\wedge\altalgendtime
+\)
+represents the time collaboration stops, either because the algorithm has terminated on round $T$, or one of 
+the participants has decided to exit early at round $T'$.
+The definition above says that incentive compatible algorithms are those for which neither competitor
+can increase their expected utility by trying to strategically exit the collaboration early.
+As we will see, incentive compatibility is a strong requirement for an algorithm and significantly
+complicates its design.

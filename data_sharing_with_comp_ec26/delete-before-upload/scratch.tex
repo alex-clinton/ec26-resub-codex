@@ -1,0 +1,245 @@
+
+% \begin{restatable*}{proposition}{optTruthfulVsOptUntruthful}
+%     For any $k\geq 0$ there exists an environment such that  
+%     \(
+%         \EE\sbr{
+%             \rewardss{
+%                 \optstrategytt{
+%                     \optstoptime
+%                 }
+%             }
+%         }
+%         -
+%         \EE\sbr{
+%             \rewardss{
+%                 \opttruthstrategytt{
+%                     \opttruthstoptime
+%                 }
+%             }
+%         }
+%         \geq k
+%     \),
+%     where 
+%     $\optexpolicy$
+%     and 
+%     $\opttruthexpolicy$
+%     are the optimal policies assuming and not assuming truthful reporting respectively.
+% \end{restatable*}  
+
+
+% \begin{restatable*}{proposition}{opt-truthful-vs-opt-untruthful2}
+% % \label{prop:untruthfulreporting}
+%     There exist a sequence of model instances such that 
+%     \mycomment{typo, remove $k$, just one problem instance}
+%     \[
+%         \EE\sbr{
+%             \rewardss{
+%                 \optstrategytt{
+%                     \optstoptime
+%                 }
+%             }
+%         }
+%         -
+%         \EE\sbr{
+%             \rewardss{
+%                 \opttruthstrategytt{
+%                     \opttruthstoptime
+%                 }
+%             }
+%         }
+%         \xrightarrow{k\rightarrow\infty}\infty
+%     \]
+%     where 
+%     \(
+%         \cbr{
+%             \optexpolicy_k
+%         }_{k\geq 0}
+%         =
+%         \cbr{
+%             \rbr{
+%                 \cbr{
+%                     \optstrategyt
+%                 }_{\timeind\geq 0},
+%                 \optstoptime
+%             }_k
+%         }_{k\geq 0}
+%     \)
+%     and 
+%     \(
+%         \cbr{
+%             \opttruthexpolicy_k
+%         }_{k\geq 0}
+%         =
+%         \cbr{
+%             \rbr{
+%                 \cbr{
+%                     \opttruthstrategyt
+%                 }_{\timeind\geq 0},
+%                 \opttruthstoptime
+%             }_k
+%         }_{k\geq 0}
+%     \)
+%     are sequences of optimal and optimal truthful policies for each model.
+% \end{restatable*}  
+
+
+% \begin{proof}
+%     Let $\numdataa=\numdatab=1$.
+%     For a particular $k\in\NN$, consider the valuations
+%     % utilties, and welfare function,
+%     % \(
+%     % \)
+%     \begin{align*}
+%         \valaii{0}=\valbjj{0}=0
+%         \qquad
+%         \valaii{1}
+%         =
+%         \begin{cases}
+%             2k
+%             &
+%             \text{w.p. } \frac{1}{2}
+%             \\
+%             % \frac{k}{2}
+%             k
+%             &
+%             \text{w.p. } \frac{1}{2}
+%         \end{cases}  
+%         \qquad
+%         \valbjj{1} = 2k
+%     \end{align*}  
+%     and let the competitors' utilities and the welfare function be given by
+%     \begin{align*}
+%         \utila(x,y) 
+%         =
+%         x-y
+%         \qquad
+%         \utilb(x,y)
+%         =
+%         \begin{cases}
+%             0 
+%             &
+%             \text{if }
+%             (y-x)\geq -k
+%             %  k\geq x-y
+%             \\
+%             2(y-x)
+%             &
+%             \text{otherwise}
+%         \end{cases}  
+%         \qquad
+%         \welfarefunc(x,y)=x+y .
+%     \end{align*}
+%     First consider when competitors are truthful. 
+%     Under this model, the optimal policy 
+%     \(
+%         \optexpolicy_k
+%         % =
+%         % \rbr{
+%         %     \cbr{
+%         %         \optstrategyt
+%         %     }_{\timeind\geq 0},
+%         %     \optstoptime
+%         % }_k
+%     \)
+%     first gives $\competitora$ competitor $\competitorb$'s point,
+%     if 
+%     % $\valaii{1}=\frac{k}{2}$ 
+%     $\valaii{1}=k$ 
+%     then sharing terminates, otherwise $\competitorb$ is given
+%     $\competitora$'s point to ensure $\competitorb$'s utility does not lead to a negative welfare.
+%     Thus the expected welfare under this policy is 
+%     \[
+%         \EE\sbr{
+%             \rewardss{
+%                 % \optstrategytt{
+%                 %     \optstoptime_k
+%                 % }^k
+%                 \stopstateforpolicy{
+%                     \optexpolicy_k
+%                 }
+%             }
+%         }
+%         =
+%         \frac{1}{2}
+%         \welfarefunc\rbr{
+%             \utilass{
+%                 (1,0)
+%             },
+%             \utilbss{
+%                 (1,0)
+%             }
+%         }
+%         +
+%         \frac{1}{2}
+%         \welfarefunc\rbr{
+%             \utilass{
+%                 (1,1)
+%             },
+%             \utilbss{
+%                 (1,1)
+%             }
+%         }
+%         =
+%         \frac{1}{2}
+%         \rbr{
+%             % \frac{k}{2}
+%             k
+%             + 0 
+%         }
+%         +
+%         \frac{1}{2}
+%         \rbr{
+%             0 + 0
+%         } 
+%         % =\frac{k}{4}
+%         =\frac{k}{2}
+%         .
+%     \] 
+%     Now consider when competitors are untruthful. 
+%     In this setting, the optimal truthful policy will
+%     not always 
+%     give $\competitorb$ competitor
+%     $\competitora$'s point. This is because doing so will always lead to a welfare of no more than 0,
+%     thus such a policy is no better than one which exchanges zero resources.
+%     Now consider a policy which only gives $\competitorb$ the point based on what is reported as $\valaii{1}$.
+%     In this case $\competitora$ is incentivized to always report the value for $\valaii{1}$ for which $\competitorb$
+%     does not receive the point as it increases their utility. However, this leads to a negative welfare.
+
+%     Therefore, the optimal policy when competitors are untruthul recommends no exchange so 
+%     \(
+%         \EE\sbr{
+%             \rewardss{
+%                 \stopstateforpolicy{
+%                     \opttruthexpolicy_k
+%                 }
+%             }
+%         }
+%         =0
+%     \)
+%     and thus
+%     \[
+%         \EE\sbr{
+%             \rewardss{
+%                 \optstrategytt{
+%                     \optstoptime
+%                 }
+%             }
+%         }
+%         -
+%         \EE\sbr{
+%             \rewardss{
+%                 \opttruthstrategytt{
+%                     \opttruthstoptime
+%                 }
+%             }
+%         }
+%         \xrightarrow{k\rightarrow\infty}\infty .
+%     \]
+% \end{proof}  
+
+\mycomment{before stating this result and when introducing truthfulness,
+spend time explaining how the opt alg isn't truthful. If we put this in a section
+4, then I can reference the example we walked through to claim optimality}
+
+\mycomment{could add a figure of 2D stopping times which could
+take up some space}

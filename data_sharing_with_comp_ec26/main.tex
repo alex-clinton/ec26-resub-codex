@@ -1,0 +1,94 @@
+\documentclass[format=acmsmall, review=false]{acmart} % EC formatting
+\usepackage{acm-ec-26} % EC formatting
+\usepackage{style} % My style macros
+\input{macros}
+
+% Choose a citation style by commenting/uncommenting the appropriate line:
+\setcitestyle{acmnumeric}
+% \setcitestyle{authoryear}
+
+\newcommand{\kkcomment}[1]{\textcolor{magenta}{(#1 --KK)}}
+
+% Title. Note the optional short title for running heads. In the interest of anonymization, please do not include any acknowledgements.
+% \title[Exchange of Resources Between Two Uncertain Competitors]{Exchange of Resources Between Two Uncertain Competitors}
+% \title[Exchanging Data Between Two Competitors with Uncertain Valuations]{Exchanging Data Between Two Competitors with Uncertain Valuations}
+% \title[Exchanging Freely-replicable Goods Between Two Competitors with Uncertain Valuations]{Exchanging Freely-replicable Goods Between Two Competitors with Uncertain Valuations}
+% Need to be careful when we just say 'resources', since resources could mean anything. We want to convey that it is the amount of goods that matter (not just which resources)
+\title[Incremental Resource Exchange between Two Competitors under Valuation Uncertainty]{Incremental Resource Exchange between Two Competitors under Valuation Uncertainty}
+
+
+
+
+
+% Anonymized submission.
+\author{Submission 385}
+
+\input{sections/abstract.tex}
+
+% Abstract. Note that this must come before \maketitle.
+% \begin{abstract}
+%     Competition often discourages companies, labs, and governments from sharing valuable resources like 
+%     data or equipment. Yet, collaboration can still be mutually beneficial and even socially
+%     desirable.
+%     However, it may be unclear 
+%     if collaborating is worthwhile when
+%     competitors do not know their value for each others' resources until using them.
+%     For instance, the value of a dataset may only become apparent after training a machine learning model on it.
+
+%     We formalize the problem of determining how competitors should exchange resources given
+%     uncertainty
+%     as designing a multi-round resource exchange algorithm.
+%     We reduce the task of designing an optimal exchange algorithm to solving an optimal stopping 
+%     problem over the 
+%     lattice $\NN^2_{\geq 0}$, adapting ideas from optimal stopping over partially ordered sets.
+%     This algorithm is individually rational for fair choices of welfare functions.
+%     We then extend our model to a significantly more challenging setting: when competitors
+%     can exit the sharing algorithm early 
+%     (as opposed to opting in or out at the beginning). 
+%     Algorithms for which
+%     it is never beneficial for either competitor to leave early are called incentive compatible (IC).
+%     Under reasonable conditions on competitors' valuations, 
+%     we determine the performance of an optimal IC algorithm. 
+%     % if it exists?
+%     % we give a construction for an optimal IC algorithm.
+
+% \end{abstract}
+
+%\newcommand{\kkcomment}[1]{\textcolor{magenta}{(#1 --KK)}}
+\newcommand{\note}[1]{\textcolor{blue}{(#1)}}
+\newcommand{\mycomment}[1]{\textsf{\textcolor{red}{(#1)}}}
+\newcommand{\todo}[1]{\textsf{\textcolor{purple}{(Todo: #1)}}}
+
+\begin{document}
+
+% Title page for title and abstract only.
+\begin{titlepage}
+
+\maketitle
+
+% Optionally include a table of contents
+\vspace{1cm}
+\setcounter{tocdepth}{1} % adjust to 1 if desired
+\tableofcontents
+
+\end{titlepage}
+
+\input{sections/intro_kirthi.tex}
+%\input{sections/intro.tex}
+\input{sections/model.tex}
+\input{sections/opt-alg.tex}
+\input{sections/opt-ic-alg.tex}
+\input{sections/conclusion.tex}
+
+\newpage
+\bibliographystyle{ACM-Reference-Format} % EC formatting
+\bibliography{references.bib}
+
+\appendix
+% \section{fill}
+
+% \input{delete-before-upload/scratch.tex}
+% \input{sections/app_omitted_proofs.tex}
+\input{sections/app_known_results.tex}
+
+\end{document}

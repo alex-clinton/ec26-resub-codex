@@ -1,0 +1,285 @@
+\documentclass[11pt]{extarticle}
+% \documentclass{article}[draft]
+\usepackage[margin=1in]{geometry}
+% \usepackage{style}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{bbm}
+\usepackage{xcolor}
+
+% \input{macros.tex}
+\newcommand{\comment}[1]{\textcolor{red}{(#1)}}
+
+\begin{document}
+
+\title{EC 2026 Rebuttal}
+\author{}
+\date{}
+\maketitle
+
+\newcommand{\kkcomment}[1]{\textcolor{magenta}{(#1 --KK)}}
+
+\section{Concrete Questions Reponse Box}
+
+\subsection*{R1Q1}
+
+Thank you for your response.
+
+\vspace{0.2cm}
+\noindent 
+R1Q1: You are correct that the IR property is defined ex-ante. We cannot hope for an 
+ex-post IR guarantee because there are events on which an agent can have negative
+% \comment{did you accidentally cut something off here}
+utility due to competition. In our setting, \emph{ex-ante} IR simply states that it is beneficial for an agent to participate without knowing her or her competitor's value for each others' data. 
+%\kkcomment{Explain further. Ex-post negative IR will raise red flags, so you want to provide further clarification.}
+
+\vspace{0.2cm}
+\noindent 
+We avoided using the term ex-interim IR as we believed different 
+interpretations could lead to confusion. We would first like to clarify what we believe
+you mean by ex-interim IR. Traditionally the ex-interim stage is after an agent learns
+their own type but before learning other agents' types. If we interpret types as 
+value functions, then this definition does not make sense, as our setting focuses precisely on when agents do not know their values for each others' goods \emph{a priori}, but can learn them incrementally as they gradually receive the goods.
+
+% ; this is because our problem
+% focuses on when agents do not realize either their entire value function or their competitor's,
+% but instead
+% only portions of them depending on the quantity of goods exchanged.
+This is distinct from the IC property, which states that it is never in either 
+agent's interest to leave the algorithm early, even when they can use information acquired
+from previous rounds to make this decision (see the factual corrections box).
+
+
+% \comment{sep line}
+
+% \vspace{0.2cm}
+% \noindent 
+% You are correct that the IR property is defined ex-ante. We cannot hope for an 
+% ex-post IR guarantee because there are events on which an agent can have negative
+% utility due to competition.
+
+% \vspace{0.2cm}
+% \noindent 
+% This leaves considering ex-interim IR, which motivates our definition for IC. 
+% An IC algorithm is defined by the following property: even when agents are allowed to 
+% use information
+% revealed from previous rounds, it is never in their interest to stop early.
+% This is captured by the fact that each agent's stopping decisions are functions of
+% the value random variables observed in previous rounds (see Definition 2.5).
+
+% \vspace{0.2cm}
+% \noindent 
+% While ex-interim IR is typically defined as a non-negative conditional expected utility
+% guarantee, the IC definition we give is equivalent.
+% To see this, notice that IC implies that each agent's conditional expected 
+% utility is non-negative
+% (or else an agent could strategically exit early when this is violated and improve
+% their expected utility, contradicting the inequality in Definition 2.5).
+% Conversely, if an agents expected conditional utility is always non-negative there 
+% is nothing to be gained by exiting early, which implies IC.
+
+% I think you need to be more careful here. ex-interim is when you realize your (entire) valuation, but not the others'. So, an ex-interim definition does not make sense here since the whole point of the paper is to study when agents do not know their values. --KK
+
+% \begin{itemize}
+
+%     \item Yes IR is ex ante. In general can't have that its always IR because of the
+%     randomness in data valuations.
+
+%     \item
+%     IC can be viewed as an ex interim guarantee
+%     because of the stopping time forumulation. If you could leave early this 
+%     would mean you could change your stopping time which by definition is a function
+%     of the info you've seen.
+%     the decision to stop early can be adaptive and in terms of the information seen! 
+%     this is why its written in the language of changing to a different stopping time
+
+% \end{itemize}  
+
+\subsection*{R3Q1}
+
+Thank you for your response.
+
+\vspace{0.2cm}
+\noindent 
+R3Q1: We allow the random valuations and utilities to be very general to model the complex ways 
+in which agents can value each other's goods and be in competition. For instance, 
+we do not require that the value functions are strictly increasing. This is reflected in the real
+world example of sharing data for machine learning where the value of data is 
+tied to the accuracy of the model it produces: accuracy (and thus value), while generally trending 
+upward as more data is obtained, does 
+not necessarily increase strictly.
+We assume that the value and utility functions are normalized to zero for convenience,
+and boundedness is for technical reasons (and is a standard assumption).
+
+
+% \comment{say practically not an issue}
+
+\vspace{0.2cm}
+\noindent 
+We apologize for a poor phrasing of the technical condition in Theorem 3.5.
+% In that condition, we
+That condition was meant to
+% say 
+highlight
+that the egalitarian welfare 
+% satisfies the requirement 
+implies our algorithm is IR
+for every instance
+of $(V^a,V^b,U^a,U^b)$, i.e. without any other assumptions, and even for pathological valuation functions (e.g. when valuations may decrease when you get more goods).
+% \kkcomment{verify, and/or provide other pathological examples here.}).
+The condition is also satisfied by the Nash welfare (and other popular welfares) in
+non-pathological instances where maximizing welfare and both agents' utilities are not at odds. 
+
+
+For instance, in
+Example 1.1, replacing the Egalitarian welfare with the Nash welfare ends up yielding the same 
+welfare maximizing algorithm: give agent $b$'s resource to agent $a$, and if agent $a$
+observes value 1, give agent $b$ agent $a$'s resource. 
+Moreover, the following calculations demonstrate that both agents have non-negative expected utility,
+and thus the algorithm is IR. Following the notation in Example 1.1, let $s'$ denote the 
+final exchange, then
+\[
+    \mathbb{E}\left[
+        U^a_{s'}
+    \right]
+    =
+    \frac{1}{2}(0)
+    +
+    \frac{1}{2}
+    \left(
+        \frac{1}{2}(3/4)
+        +
+        \frac{1}{2}(1)
+    \right)
+    =
+    \frac{7}{16}
+    \qquad
+    \mathbb{E}\left[
+        U^b_{s'}
+    \right]
+    =
+    \frac{1}{2}(0)
+    +
+    \frac{1}{2}
+    \left(
+        \frac{1}{2}(3/4)
+        +
+        \frac{1}{2}(-1/4)
+    \right)
+    =
+    \frac{1}{8} .
+\]
+We agree that this could be better explained in a revision.
+
+% \vspace{0.2cm}
+% \noindent 
+% For the welfare function, on page 11 we highlighted the Egalitarian welfare, $W(x,y)=\min(x,y)$,
+% because 
+% $\mathbb{E}[\text{min}(X,Y)]\Rightarrow \mathbb{E}[X],\mathbb{E}[Y]\geq 0$
+% and thus the implication in Theorem 3.5 is automatically satisfied. 
+% However, the fact that $\mathbb{E}[XY]\not\Rightarrow \mathbb{E}[X],\mathbb{E}[Y]\geq 0$
+% does not rule out the Nash welfare in general.
+% While it is true that the Nash welfare may not satisfy the implication for every instance 
+% of $(V^a,V^b,U^a,U^b)$, there are many instances for which it does. 
+% For instance, in
+% Example 1.1 replacing the Egalitarian welfare with the Nash welfare ends up yielding the same 
+% welfare maximizing algorithm. 
+% Moreover, under this algorithm, both agents' expected
+% utilities are non-negative
+% so our optimal algorithm is IR.
+% The implication in Theorem 3.5 is meant as an auxiliary condition, to show that IR is 
+% inevitable under some welfare functions, not as a restriction on the welfare functions 
+% that can be used for a particular instance of $(V^a,V^b,U^a,U^b)$.
+% given problem instance.
+
+% both agents' expected utility 
+
+
+
+% \vspace{0.2cm}
+% \noindent 
+% For instance, 
+
+% \begin{itemize}
+%     \item
+%     utilities and valuations very general to model the complex ways in which agents 
+%     can value each others' good and be in competition. 
+
+%     \item We emphasized 
+%     Egalitarian welfare $W(x,y)=\min(x,y)$ because satisfies 
+%     $\mathbb{E}[\text{min}(X,Y)]\Rightarrow \mathbb{E}[X],\mathbb{E}[Y]\geq 0$
+%     and thus the implication in Theorem 3.5 is automatically satisfied. 
+
+%     However, while the Nash welfare may not satisfy this implication for every 
+%     problem instance (check what I called this), there are setups where the nash welfare
+%     still works.
+%     For instance in example 1.1 the expected utilities of both agents are non negative
+%     so the implication trivially holds.
+% \end{itemize}  
+
+\section{Factual Corrections Response Box}
+
+\subsection*{Review 385A}
+
+Review 385A:
+``Even then, the definition still compares the expected utility of stopping early rather than 
+an adaptive response to the information they have obtained up to this round.''
+
+\vspace{0.2cm}
+\noindent 
+The definition of IC does allow for an adaptive response to the information an agent
+has obtained up to the previous round.
+In Definition 2.5, this is made explicit by the fact that any sequence of early stopping 
+decisions
+$\{\delta'_t\}_{t\geq 0}$ is comprised of functions which depend on the 
+values realized by both agents from the previous rounds:
+\(
+    \{V^a_k\}_{k=0}^{i_t},
+    \{V^b_k\}_{k=0}^{j_t}
+\).
+Therefore, the time an agent chooses to exit, defined as $T'$, 
+depends on information received from
+the previous round. 
+% \kkcomment{can add here that it is information about her vaues and the others' values}.
+% \comment{make clearer that the $V^a$ and $V^b$ are from 
+% both users}
+The requirement that 
+\(
+    \mathbb{E}\left[
+        U^a_{s_{\min(T,T')}}
+    \right]
+    \leq 
+    \mathbb{E}\left[
+        U^a_{s_T}
+    \right]
+\)
+says no matter which adaptive strategy is employed by agent $a$
+to leave early, the agent is no better off than continuing to participate 
+in the algorithm until it terminates at time $T$.
+
+\subsection*{Review 385B}
+
+Insert default response.
+
+\subsection*{Review 385C}
+
+Insert default response.
+
+\section{Questions for Kirthi}
+
+\begin{enumerate}
+    % \item I think we can fold the factual inaccuracies for R1 and R3 into their 
+    % question responses?
+
+    % \item He kinda got us on the Nash welfare comment?
+
+    \item For reviewer 1 should we quote the optional feedback as an innacuracy?
+    Its the same point we're already addressing
+
+    \item For reviewer 3 add a comment about how you could randomize who gets 
+    the item first for the sake of fairness?
+\end{enumerate}  
+
+\end{document}

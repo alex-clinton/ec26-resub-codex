@@ -1,0 +1,545 @@
+\section{Introduction}
+
+% Competition is a strong deterant for companies, research labs, and governmental insitutions to exchange
+% resources. For example, pharaceutical companies may be hesitant to share data on different classes of 
+% drugs with their competitors for fear of losing intellectual property. Similarly, research labs 
+% may avoid sharing their equipment or findings,
+% fearing that other labs would reap the rewards of publishing first. 
+% However, it is often socially desirable for these insitutions to collaborate. In the aforementioned 
+% examples, collaboration could expidite
+% the development of novel pharaceuticals and scientific discoveries, both of which are beneficial
+% to society.
+% Moreover, while competition may deter the exchange of resources, it can be still be 
+% mutually beneficial in non-zero sum settings.
+% An important question is thus how to incentivize two competitors to share resources?
+
+Competition often deters companies, research labs, and government institutions from sharing resources. 
+For example, pharmaceutical companies may hesitate to share data on drug classes with competitors 
+for feat of losing intellectual property. Likewise, research labs might avoid sharing equipment or findings to prevent 
+others from publishing first. Despite this, collaboration is often socially beneficial. In the aforementioned cases, 
+it could accelerate the development of new drugs and scientific discoveries. 
+Moreover, while competition can hinder cooperation, resource sharing may still be mutually advantageous 
+in nonzero sum settings. 
+
+An obstacle to resource sharing between two competitors is that each may be uncertain of the value of the 
+other's resources until after using them. For example, the utility of a dataset might only become 
+clear once it's used to train a machine learning model. Similarly, the value of access to compute or equipment 
+may depend on whether the resulting experiments or simulations produce novel findings. 
+% This work explores how to incentivize 
+The central question this work answers is how to incentivize
+two competing agents to share resources when mutual benefit is likely, but their valuations for each 
+others' resources are uncertain.
+
+% A practical barrier to two competitors sharing resources is that they 
+% may not know the value for 
+% each others' resources until recieving and using them.
+% For example if two competitors are exchanging different datasets, a competitor may not know their 
+% value for the other's data until receiving it and attempting to use it to train a machine learning model.
+% In the case of research labs exchanging access to compute or equipment, the value for this access 
+% could be contingent upon the results of experiments or simulations run on these resources. If an
+% experiment/simulation produced novel results then access was valuable but if it did not, then the access 
+% was substantially less valuable.
+% The main question of this work is how can we incentivize competing agents to share resources
+% when it is likely mutually beneficial to do so, given uncertainty about their valuations for each
+% others' resources.
+
+% goal is to fin
+
+% \begin{enumerate}
+
+%     \item 
+%     Give data examples
+
+%     \item 
+%     You don't know the value of compute time until you try to use it to do your experiments or 
+%     simulations. If the simulations or experiments finish early, great, if not then need more compute.
+%     Or find a negative vs positive result from running scientific experiments or simulations. 
+%     For example your access to a piece of equipment was supper valuable if you got great results
+%     but not very valuable if you didn't.
+
+%     \item 
+
+% \end{enumerate}  
+
+% \begin{enumerate}
+%     \item Paragraph about rising importance of data, unique from econ perspective that
+%     once collected it can be freely shared or replecated.
+    
+%     \item 
+%     Data sharing platforms exist but make unrealistic assumptions, agents willing 
+%     to give away data for free (in same company) because don't assume competition.
+%     Also assume things like truthful reporting.
+
+%     \item 
+%     Prior work has studied incentivizes in data sharing (truthfulness, fairness, )
+
+%     \item In this work we study competition for strategic agents
+    
+% \end{enumerate}  
+
+\subsection{Problem Motivation}
+
+We will suppose that there are two competitors, $\competitora$ and $\competitorb$, each possessing 
+collections of $\numdatab$ and $\numdataa$ 
+different goods
+respectively. Suppose that both agents would derive value from each others' goods based on the quantity
+received.
+Let this be quantified by random value functions
+$\vala:\cbr{0,\ldots,\numdataa}\rightarrow\RR$ and 
+$\valb:\cbr{0,\ldots,\numdatab}\rightarrow\RR$, where $\vala$ and $\valb$ are independent.
+
+
+\begin{restatable}{example}{nme-val-functions}
+    \label{ex:nme-val-functions}
+    Suppose $\competitora$ and $\competitorb$ possess datasets
+    \(
+        \cbr{X^\competitora_i}_{i=1}^\numdatab
+        \drawniid
+        % \Ncal\rbr{\mu_\competitora,\sigma^2}
+        D_a
+    \)
+    and
+    \(
+        % \quad
+        % \text{and}
+        % \quad
+        \cbr{X^\competitorb_i}_{i=1}^\numdatab
+        \drawniid
+        % \Ncal\rbr{\mu_\competitorb,\sigma^2}
+        D_b
+    \)
+    drawn from bounded distributions
+    % where $D_a$ and $D_b$ are bounded.
+    % respectively
+    but wish to estimate the mean of each others' distributions. In this case, the value 
+    functions may be defined as
+    \begin{align*}
+    % \(
+        \vala_{\numdatafora}
+        =
+        % \rbr{
+        \bigg(
+            \frac{1}{k}
+            \sum_{k=1}^\numdatafora
+            X^b_k
+            -
+            \mu_b
+        \bigg)^2
+        % ~\forall \numdatafora\geq 1
+        \quad
+        \text{and}
+        \quad
+        % }^2
+    % \),
+    % \(
+        \valb_{\numdataforb}
+        =
+        % \rbr{
+        \bigg(
+            \frac{1}{k}
+            \sum_{k=1}^\numdataforb
+            X^\competitora_k
+            -
+            \mu_\competitora
+        \bigg)^2
+        % ~\forall \numdataforb\geq 1
+        % }^2
+    % \),
+    \end{align*}
+    for $\numdatafora,\numdataforb\geq 1$, and $\vala_0=-C_a$, $\valb_0=-C_b$ 
+    for sufficiently large $C_a,C_b\in\RR$,
+    representing agents' values when they lack data.
+\end{restatable}
+% Beyond Example~\ref{ex:nme-val-functions} 
+
+More generally, in machine learning, the value for data may be unknown until using it to train a model and
+observing its performance. 
+
+However, the agents may be hesitant to exchange resources if they are in competition. 
+A exchange 
+\(
+    \rbr{\exchangea,\exchangeb}
+    =
+    \exchange\in\setexchanges
+    =
+    \cbr{0,\ldots,n}\times\cbr{0,\ldots,m}
+\)
+corresponds to $\competitora$ receiving $\numdatafora$ of $\competitorb$'s resources and 
+$\competitorb$ receiving $\numdataforb$ of $\competitora$'s resources.
+For a particular exchange 
+\(
+    \rbr{\exchangea,\exchangeb}
+    =
+    \exchange\in\setexchanges
+    % =
+    % \cbr{0,\ldots,n}\times\cbr{0,\ldots,m}
+\)
+let
+\(
+    \utilas = \utila\big(\valai,\valbj\big)
+\)
+and
+\(
+    \utilbs = \utilb\big(\valai,\valbj\big)
+\)
+% let $\utila:\setexchanges\rightarrow\RR$ and $\utilb:\setexchanges\rightarrow\RR$ denote
+be the utilities for both agents,
+where
+\(
+    \utila,\utilb:\RR^2\rightarrow\RR
+\)
+are functions mapping the value obtained by both competitors to their utilites.
+In other words, $\utila,\utilb$ model how competitors care about either value 
+derived from collaborating.
+
+For example, a natural model is when competitors' utilies are linear both part parties'
+valuations and are given by
+\(
+    \utilas
+    =
+    \valai-\compcoeff\valbj
+\)
+and
+\(
+    \utilbs
+    =
+    \valbj-\compcoeff\valai
+\)
+for $\compcoeff\in(0,1)$.
+In this model, $\compcoeff$ quantifies how directly the agents are in competiton.
+When $\compcoeff=1$ agents are in a zero-sum game whereas $\compcoeff=0$
+signifies no competition. 
+
+Let $\welfarefunc:\RR^2\rightarrow\RR$ be a selected welfare function used to quantify the quality of an exchange
+$\exchange\in\setexchanges$ via $\welfarefunc\rbr{\utilas,\utilbs}$. 
+Common examples of welfare functions include the egalitarian welfare~\citep{mas1995microeconomic} 
+$\welfarefunc(x,y)=\min(x,y)$, the 
+Nash welfare~\citep{nash1950bargaining} $W(x,y)=xy$, or the social welfare subject to individual rationality 
+$\welfarefunc(x,y)=(x+y)\cdot 1_{\cbr{x,y\geq 0}}$. We are interested in the problem of designing  
+algorithm which facilitates an exchange $\exchange\in\setexchanges$ to maximize the welfare.
+
+If the valuation functions $\vala,\valb$ are deterministic, this is not an interesting problem as it simply reduces to 
+the discrete optimization problem
+\(
+    \argmax_{
+        \exchange\in\setexchanges
+    }
+    \welfarefunc\rbr{
+        \utilas,\utilbs
+    }
+\). 
+When $\vala$ and $\valb$ are random,
+% However, agents may not know their value for a particular quantity of goods until after 
+% receiving and using them? 
+% For example, an agent may value data based on the accuracy of a model trained from it, which is 
+% unknown until the data is used. In such cases what exchanges should a data sharing algorithm propose 
+% to maximize the welfare?
+% To model this, we assume that $\vala$ and $\valb$ are independent random variables, each drawn from known but not 
+% necessarily identical distributions. 
+% Under this model 
+a natural approach would be to propose an
+exchange that maximizes the expected welfare, i.e. to solve for 
+% \begin{align*}
+\(
+    \argmax_{
+        \exchange\in\setexchanges
+    }
+    \EE\sbr{
+        \welfarefunc\rbr{
+            \utilas,\utilbs
+        }
+    } .
+\)
+% \end{align*}
+
+However, it turns out that if instead of proposing a one time exchange, we propose a sequence of increasing
+exchanges (with both competitors reporting their observed values after each round), then we can obtain a 
+higher expected welfare. This is demonstrated in the following example.
+
+\begin{restatable}{example}{multi-vs-single-round-alg}
+    \label{ex:multi-vs-single-round-alg}
+    Let $\numdataa=\numdatab=1$, so $\setexchanges=\cbr{0,1}^2$. Suppose that each competitor's value for the other's good is 
+    $\valaii{1},\valbjj{1}\drawniid\Bern(1/2)$ and assume $\valaii{0}=\valbjj{0}=0$.
+    Let the utilities and welfare be given by
+    \begin{align*}
+        \utilas
+        =
+        \valai-\frac{1}{4}\valbj,
+        \quad 
+        \utilbs
+        =
+        \valbj-\frac{1}{4}\valai,
+        \quad
+        \text{and}
+        \quad
+        \welfarefunc(x,y)=\min(x,y) .
+    \end{align*}  
+    A direct computation shows that 
+    \begin{align*}
+        \rbr{1,1} 
+        =
+        \argmax_{
+            \exchange\in\cbr{0,1}^2
+        }
+        \EE\sbr{
+            \min\rbr{
+                \utilas,\utilbs
+            }
+        } 
+        \quad
+        \text{and}
+        \quad
+        \EE\sbr{
+            \min\rbr{
+                \utilass{(1,1)},\utilbss{(1,1)}
+            }
+        } 
+        =
+        \frac{1}{16} .
+    \end{align*}  
+    Thus $(1,1)\in\setexchanges$ is the single exchange that maximizes the expected welfare.
+
+    Now consider a multi-exchange algorithm that works as follows. The algorithm first gives one of 
+    $\competitora$ or $\competitorb$ the other's resouce (without loss of generality assume 
+    $\competitora$ receives $\competitorb$'s resource). 
+    Competitor $\competitora$ is then asked to report their value of the received resource
+    (either $0$ or $1$). If the $\competitora$ reports a $1$, then $\competitorb$ is 
+    given $\competitora$'s resource. 
+    However, if $\competitora$ reports a $0$, then $\competitorb$ is given nothing.
+    Let $\exchange'=(i',j')\in\cbr{0,1}^2$
+    denote the final exchange in this algorithm. A direct computation shows that 
+    \begin{align*}
+        \EE\sbr{
+            \min\rbr{
+                \utilass{s'},\utilbss{s'}
+            }
+        } 
+        &=
+        \EE\sbr{
+            \min\rbr{
+                \valaii{i'}
+                -
+                \frac{1}{4}
+                \valbjj{j'}
+                ,
+                \valbjj{j'}
+                -
+                \frac{1}{4}
+                \valaii{i'}
+            }
+        } 
+        \\
+        &=
+        \frac{1}{2}
+        \rbr{
+            \frac{1}{2}
+            \min\rbr{
+                1-\frac{1}{4}
+                ,
+                1-\frac{1}{4}
+            }
+            +
+            \frac{1}{2}
+            \min\rbr{
+                1-\frac{1}{4}
+                ,
+                -\frac{1}{4}
+            }
+        }
+        +
+        \frac{1}{2}\min(0,0)
+        \\
+        &=
+        \frac{1}{8} .
+    \end{align*}  
+\end{restatable}  
+
+Example~\ref{ex:multi-vs-single-round-alg} demonstrates that algorithms which can use competitors'
+reported valuations to propose an increasing sequence of exchanges can obtain a strictly higher
+expected welfare than a single exchange algorithm. Thus our goal will be to find the
+optimal multi-exchange algorithm.
+
+\textbf{Truthfulness assumptions.}
+% Multi-exchange algorithms like the one given in example 1.1 rely on competitors truthfully reporting their value
+% or their value being publicly observable/validated 
+% for the data they have received. This is because in order to fairly determine future exchanges in both
+% competitors best interests, they need to know the utilities of both agents. 
+% To capture this difficulty, we first define the price of stability in this problem to be the 
+% ratio of the expected welfare of the optimal multi-exchange algorithm to the expected welfare of the 
+% optimal truthful mult-exchange algorithm. We then present a hardness result in Prop(\mycomment{fill later}),
+% showing that the price of stability is unbounded. In other words, truthful algorithms cannot compete 
+% with multi-exchange algorithms.
+Multi-exchange algorithms, like Example~\ref{ex:multi-vs-single-round-alg}, rely on competitors truthfully 
+reporting (or publicly validating) the value of the resources they receive. This is essential for 
+fairly determining future exchanges based on both agents' utilities. To formalize this challenge, 
+we will define the price of stability as the ratio between the expected welfare of the optimal 
+multi-exchange algorithm and that of the optimal truthful one. 
+In Proposition (\mycomment{fill later}), we show this ratio is unbounded, i.e. truthful algorithms cannot 
+match the performance of unrestricted multi-exchange algorithms.
+
+
+\mycomment{say other person's utility is a function of their valuation???}
+
+\mycomment{add an unbounded PoS result}
+\mycomment{does PoS even make sense cause welfare can be 0 or negative?}
+\mycomment{abs difference unbounded}
+% \mycomment{put in here something saying in order to create multi round }
+
+\textbf{When participants can exit early.}
+
+
+\subsection{Results and Technical Contributions.}
+Our main contributions are formulating the problem of incentivizing competing agents to exchange resources
+given uncertainty about their valuations for each others' resources and the design of an optimal 
+algorithm to do so.
+
+\textbf{Our novel setting.} 
+\mycomment{edit this to be a mini prior work of why our problem setting is different and not captured
+by existing work}
+\mycomment{argue that existing models in other papers don't capture increasingly important usecases like
+data sharing for ml}
+\mycomment{while doing this, introduce our notation}
+In Section~\ref{sec:model} we start by formalizing the interaction protocol
+between competitors when exchanging goods, defining their valuations, utilities, and the welfare under
+a particular exchange. 
+Motivated by Example~\ref{ex:multi-vs-single-round-alg}, we define an exchange algorithm, to be a sequence
+of increasing proposed exchanges, each based on reported valuations from the prior exchanges.
+From this, we define an optimal exchange algorithm to be one which maximizes the
+expected welfare. 
+Finding an algorithm is our first goal.
+We also define what it means for an exchange algorithm to be individually rational: in expectation 
+competitors are no worse off participating than forgoing collaboration.
+\mycomment{make sure we introduce utility, welfare here to, cause mentioned in following section}
+
+\textbf{Reducing algorithm design to optimal stopping.} 
+
+\emph{Challenges:}
+A central challenge in designing an optimal exchange algorithm is proposing a sequence 
+of optimal exchanges using only the information revealed by the previous exchange about 
+future exchanges.
+This is further complicated by the lack of assumptions we require of 
+the valuation functions,
+utilty functions, and welfare function. For example, 
+% for $\arbitrarycompetitor\in\cbr{\competitora,\competitorb}$, 
+the random variables 
+\(
+    \big\{
+        \valai
+    \big\}_{\numdatafora=0}^\numdataa
+\)
+could be continuous, discrete, or arbitrarily correlated
+as is also the case with
+\(
+    \big\{
+    % \{
+        \valbj
+    \big\}_{\numdataforb=0}^\numdatab
+    % \big\}_{\numdataforb=0}^\numdatab
+\).
+Furthermore, the only assumption we make on these random variables (and the utilty and welfare funcitons 
+$\utilas,\utilbs,\welfarefunc$) is boundedness.
+Because of this, projecting the welfare of future exchanges is complicated.
+Thus, it is difficult to design an algorithm which repeatedly proposes
+a sequence of exactly optimal exchanges given the available information from the previous exchanges.
+Competition adds another layer of complication as exhanges that are in one competitor's best interest may not 
+be in the interest of the other's.
+
+\emph{Techniques and insights:}
+Our first insight is to reframe an algorithm as a policy for traversing the lattice 
+\(
+    \setexchanges
+    =
+    \cbr{0,\ldots,\numdataa}
+    \times
+    \cbr{0,\ldots,\numdatab}
+\), 
+which encodes the set of all valid exchanges,
+starting at $(0,0)$ and moving only up/right at each step, using the information 
+reported from previous exchanges.
+Each such traversal corresponds to an increasing sequence of exchanges, representing that competitors
+cannot unshare resources.
+Our core insight is that we can use this reformulation to reduce the design of an optimal exchange
+algorithm to solving an optimal stopping time problem over the partially ordered lattice $\setexchanges$,
+leveraging techniques from~\citep{mandelbaum1981optimal}.
+At a high level, the algorithm works as follows. At each time, determine which of the following three options would lead to 
+a higher expected welfare: (1) terminating the exchange, (2) giving $\competitora$ an additional one of 
+$\competitorb$'s resources and then ``proceeding optimally'', or (3) giving $\competitorb$ an additonal one of $\competitorb$'s
+resources and then ``proceeding optimally''.
+We compute the expected welfare of ``proceeding optimally'' after a given exchanged, using a dynamic programming 
+type result from~\citep{mandelbaum1981optimal} which is a common approach in optimal stopping.
+We show that under a reasonable assumption on the welfare function $\welfarefunc$,
+the optimal algorithm we obtain is also automatically individually rational.
+
+% \begin{enumerate}
+%     \item A main challenge in designing an opt alg is that the space of all possible algorithms is extremely complicated
+%     and that we do not put \textbf{any} restrictions on the valuation functions, for example they could be discrete support
+%     or they could be continues and markovian, give example of trending upwards markov normal dist model? We also do not 
+%     make any assumptions on the welfare functions, utility funcitons, other than normalization so that when no data is shared
+%     welfares and utilities are 0. Competiton also inhererntly makes this complicated because exchanges that are in one agents' 
+%     best interest may not be in the others'. 
+    
+%     \item
+%     Our first technical insight is to reframe the design of an exchange algorithm to the design of an algorithm which traverses
+%     the lattice (S= ..., moving up/right) which encodes the possible exchanges between agents. Our core insight is that 
+%     we can use this reformulation to reduce the design of an optimal exchange algorithm to solving an optimal stopping time 
+%     over the partially ordered lattice using techniques from~(). 
+
+%     \item
+%     To perform this reduction we consider the state space ... along with the filtration ... to capture the information know
+%     to the algorithm designer after both agents report their valuations after an exchange. 
+%     The result is an algorithm which achieves the optimal expected revenue among all algorithms. At a high level, this algorithm
+%     works as follows. At each time t give only one of either a or b the others' next good and ask them to report their valuation
+%     based on this the algorithm can decide which agent is 
+    
+%     \mycomment{mention dynamic programming}
+% \end{enumerate}  
+
+
+% In Section~\ref{sec:opt-non-ic-alg} we show how the problem of 
+% designing an optimal exchange algorithm can be reduced to solving an optimal stopping time problem over 
+% the partially ordered lattice $\NN^2_{\geq 0}$ using the framework of~\citet{mandelbaum1981optimal}. 
+% % stopping time problem over the partially ordered set $\NN^2_{\geq 0}$ (with $(x_1,y_1)\leq (x_2,y_2) \iff$ 
+% % $x_1\leq x_2$ and $y_1\leq y_2$).
+% % More concretely, we leverage an extension of the classical optimal stopping 
+% Because an exchange algorithm is an increasing sequence of exchanges (we use the standard partial ordering
+% over $\NN^2$ to compare exchanges: $(i_1,j_1)\leq(i_2,j_2)\iff i_1\leq i_2$ and $j_1\leq j_2$), solving 
+% for the optimal exchange algorithm is equivalent to determinining how to traverse $\NN^2_{\geq 0}$ in an
+% increasing manner and determining when to stop traversing (i.e. when to settle on a final exchange).
+% In addition to proving optimality, we show that for any choice of welfare function that respects individual
+% rationality, our optimal exchange algorithm is also individually rational.
+% As our definition of individual rationality is ex-ante, we supplement this with high probability guarantees
+% that our optimal exchange algorithm is ex-post individually rational.
+
+\mycomment{sep line}
+
+\mycomment{put in IC motivating example here? or is it weird to have an example in the contributions section}
+\textbf{An optimal incentive compatible algorithm.}
+Our model thus far has assumed that once an agent signs on to participate in an algorithm, it will 
+adhere to the sequence of exchanges proposed until the algorithm terminates. 
+However, a competitor may be motivated to exit the exchange process early if she gets lucky with the value
+she obtains from early on exchanges. In Section~\ref{sec:opt-ic-alg} we define incentive compatible
+exchange algorithms to be those where neither competitor ever benefits from exiting the 
+exchange algorithm early. We then give simple examples where the optimal incentive compatible exchange algorithm 
+achieves a strictly lower expected welfare than the optimal exchange algorithm, demonstrating that 
+incentive compatiblility is a property that cannot be obtained for free. We will then give examples showing the 
+different challenges at play that complicate the design of an optimal incentive compatible algorithm. 
+
+A priori,
+the answer to whether an optimal incentive compatible algorithm even exists is not clear. We answer this question
+in the affirmative, by constructing such an algorithm, providing novel adaptations of concepts from the theory 
+of optimal stopping. 
+We show that in addition to being incentive compatible,
+this algorithm satisfies the same ex-ante and ex-post individual rationality guarantees as our first algorithm.
+% One caveat is that 
+
+
+% \paragraph{Truthfulness impossibility results}
+
+
+\subsection{Related Work}
+
+\begin{enumerate}
+    \item \mycomment{Is there existing econ literature on the exchange of goods under competition?}
+    \item Look at peter's? for info
+    \item related-work-planning.md
+\end{enumerate}  

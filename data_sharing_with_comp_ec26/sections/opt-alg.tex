@@ -1,0 +1,2512 @@
+\section{An Optimal IR Resource Exchange Algorithm}
+\label{sec:opt-non-ic-alg}
+
+% Our first algorithm design goal will be to determine when there exists
+% an optimal algorithm and to construct one in this case.
+% \mycomment{I don't think the term policy is mentioned anywhere in durrett}
+Our first goal is to determine whether an optimal algorithm exists, and to construct one when it does.
+To do so,
+we will draw on tools from martingale theory to design our exchange algorithm and, accordingly, adopt some of the 
+terminology from this literature. In this context, the term \emph{policy} is used as a generalization of stopping 
+times to partially ordered sets~\citep{mandelbaum1981optimal,williams1991probability}. We focus on a restricted class 
+of such policies, which we term \emph{exchange policies}. These policies satisfy additional structural properties that 
+enable the design of exchange algorithms (Definition~\ref{def:exchange-alg}). In Section~\ref{sec:exchangealgotopolicy}, 
+we will first show how an exchange algorithm can be reformulated as an exchange policy.
+Then, in Section~\ref{subsec:reduction-to-optimal-stopping}, we will show how we can use optimal stopping over the lattice to derive an optimal exchange algorithm.
+
+\subsection{Reformulating an Exchange Algorithm as an Exchange Policy}
+\label{sec:exchangealgotopolicy}
+
+%\kkcomment{Can we not call this an 'exchange policy'? }
+
+
+
+
+% We will use tools from martingale theory to design an exchange algorithm, and as such, borrow some verbiage from this literature.
+% In this literature, the term 'policy' is used as a generalization of stopping times for partially ordered sets~\citep{mandelbaum1981optimal,williams1991probability,durrett2019probability}.
+% We will consider a subset of such policies, which we call `exchange policies', which have additional properties and can be used to design exchange algorithms (Definition~\ref{def:exchange-alg}).
+% We will now define these terms formally.
+
+Suppose that an exchange 
+\(
+    \exchange
+    =
+    \rbr{
+        \numdatafora,
+        \numdataforb
+    }
+\)
+has already occurred. In this case $\competitora$ has observed their value for the first 
+$\numdatafora$ of $\competitorb$'s resources and 
+$\competitorb$ has observed their value for the first $\numdataforb$ of $\competitora$'s resources.
+To represent the information
+available to an algorithm after $\competitora$ and $\competitorb$ report their values for the 
+exchange 
+\(
+    \exchange=\rbr{
+        \numdatafora, \numdataforb
+    }\in\setexchanges
+\), we define the $\sigma$-algebra
+\begin{align*}
+    \statefilts
+    =
+    \sigma\rbr{
+        \cbr{
+            \valaii{k}
+        }_{k=0}^\numdatafora,
+        \cbr{
+            \valbjj{k}
+        }_{k=0}^\numdataforb
+    }
+    \numberthis
+    \label{eq:family-sig-alg}
+\end{align*}  
+and consider the family
+\(
+    \cbr{
+        \statefilts
+    }_{
+        \exchange\in\setexchanges
+    }
+\).
+Notice that for two exchanges
+\(
+    \exchangett{1},\exchangett{2}
+    \in\setexchanges
+\)
+we have 
+% \begin{align*}
+\(
+    \exchangett{1}\leq\exchangett{2}
+    \iff 
+    \statefiltss{
+        \exchangett{1}
+    }
+    \subseteq
+    \statefiltss{
+        \exchangett{2}
+    }
+\).
+% \end{align*}  
+This reflects that larger exchanges contain more information about the agents' valuation functions.
+Additionally, 
+\(
+    \statefiltss{0}
+    =
+    \cbr{\varnothing,\Omega}
+\)
+which captures that no information besides the distributions $\priora,\priorb$ of the valuation functions is known prior to 
+$\competitora$ and $\competitorb$ exchanging any data.
+
+From Defintion~\ref{def:exchange-alg}, we see that for any algorithm $\alg\in\classalgs$, there is a correspondence
+between $\alg$ and the sequence of $\setexchanges$-valued random variables 
+\(
+    \rbr{
+        \algstatett{0},
+        \ldots
+        \algstatett{\algendtime}
+    }
+\)
+it induces. Moreover, it is the case that 
+\(
+    \algstatett{\timeind+1}
+\)
+is
+\(
+    \statefiltss{
+        \algstatet
+    }
+\)-measurable, reflecting that at round $\timeind$, the choice of the next exchange
+only depends on information revealed at the time of the current exchange.
+Intuitively, an algorithm can be thought of as a way of traversing $\setexchanges\subset\NN^2$, starting at $0$, and moving up or right
+each round,
+and deciding when to stop.
+We will shortly see that an algorithm is a special case of 
+% what~\citet{mandelbaum1981optimal} defines to be a policy.
+a policy, which is the generalization of a stopping time to a partially ordered set.
+\begin{restatable}{definition}{policy}
+    \label{def:policy} 
+    \textup{
+        (\citet{mandelbaum1981optimal})
+    }
+    Let $\osasstates$ be a countable partially ordered set. For $r,s\in S$ denote
+    \(
+        \sbr{r,\osasstate}
+        =
+        \cbr{
+            u\in \osasstates: r\leq u\leq \osasstate
+        } 
+    \).
+     Let 
+    \(
+        \osasdirectsuccessorss{
+            \osasstate
+        }
+        =
+        \cbr{
+            u> \osasstate: \sbr{\osasstate,u}=\cbr{\osasstate,u}
+        } 
+    \) be the set of direct successors.
+    Assume that $\sbr{r,\osasstate}$ is finite and there is a unique minimal element $0\in \osasstates$. 
+    Let 
+    \(
+        \cbr{\statefilts}_{
+            \osasstate\in \osasstates
+        }
+    \)
+    be a family of $\sigma$-algebras where $\Fcal_r\subseteq\Fcal_\osasstate$ for $r\leq \osasstate$. A strategy is 
+    a sequence of $\osasstates$-valued random variables $\cbr{\sigma_\timeind}_{\timeind\geq 0}$ such that 
+    \(
+        \sigma_\timeind \leq \sigma_{\timeind+1}
+    \)
+    and
+    \(
+        % \quad
+        \sigma_{\timeind+1} \text{ is }
+        \Fcal_{\sigma_\timeind}\text{-measurable}
+    \).
+    A policy $\pi$ is a pair
+    \(
+        \rbr{
+            \cbr{
+                \osasstrategyt
+            }_{\timeind\geq 0},
+            \osasstoptime
+        }
+    \)
+    where $\osasstoptime$ is a stopping time with respect to the filtration
+    \(
+        \cbr{
+            \timefiltt
+        }_{\timeind\geq 0}
+        =
+        \cbr{
+            \statefilt_{
+                \strategyt
+            }
+        }_{\timeind\geq 0}
+    \).
+    Denote $\osaspolicies$ as the class of policies such that $\osasstrategytt{0}=0$.
+\end{restatable}  
+
+To limit the number of subscripts, we will occassionally write
+$\stopstateforpolicy{\apolicy}$ as shorthand for 
+$\strategytt{\stoptime}$.
+In~\citet{mandelbaum1981optimal}, each state is associated with a reward $\osasrewards$, and the expected 
+reward of a policy 
+\(
+    \rbr{
+        \cbr{
+            \sigma_t
+        }_{t\geq 0},
+        \tau
+    }
+\)
+is defined as
+\(
+    \EE\sbr{
+        \osasrewardss{
+            \osasstrategytt{
+                \osasstoptime
+            }
+        }
+    }
+\).
+Because of this, when specifying a policy 
+\(
+    \rbr{
+        \cbr{
+            \osasstrategyt
+        }_{\timeind\geq 0},
+        \osasstoptime 
+    }
+    % \in
+    % \osaspolicies
+\),
+we only need to worry about defining $\strategyt$ for $\timeind\leq\stoptime$.
+In our setting, an algorithm can be viewed as a policy that satisfies additional structure. We refer to such policies as \emph{exchange policies} and define them formally below.
+
+
+% For our problem, an algorithm can be viewed as a policy with two additional requirements, taking $S=\setexchanges$
+% (equiped with the standard partially ordering over $\NN^2$), 
+% the family of $\sigma$-algebras as given in~\eqref{eq:family-sig-alg},
+% and the reward $\osasrewards$ associated to $\exchange\in\setexchanges$ to be $\rewards$. 
+% % Thus we have the following equivalent definition of a resource exchange algorithm.
+% This is formalized in the following definition.
+% \kkcomment{write more clearly. this sounds like there are 3 additional requirements.}
+
+
+\begin{restatable}{definition}{exchange-policy}
+    \label{def:exchange-policy} 
+    A resource exchange policy
+    % $\alg$
+    is a policy 
+    \(
+        \osaspolicy=
+        \rbr{
+            \cbr{
+                \strategyt
+            }_{\timeind\geq 0},
+            \stoptime 
+        }
+        \in
+        \osaspolicies
+    \),
+    as specified in Definition~\ref{def:policy}, taking
+    \(
+        \osasstates=\setexchanges
+    \)
+    (which has the unique minimal element $(0,0)$)
+    equiped with the family of $\sigma$-algebras 
+    \(
+        \cbr{
+            \statefilts
+        }_{\exchange\in\setexchanges}
+    \)
+    given in~\eqref{eq:family-sig-alg}. We additionally require that
+    \(
+        \strategyt < \strategytt{\timeind+1}
+    \)
+    for
+    \(
+        \strategyt < \rbr{
+            \numdataa,\numdatab
+        },
+    \)
+    and that $\stoptime$ is finite.
+    Denote $\setexchangepolicies$ as the class of exchange policies.
+\end{restatable}  
+
+% Shortly, we will see the benefit of working with Definition~\ref{def:exchange-policy}
+% instead of Definition~\ref{def:exchange-alg}.
+
+The 
+following result establishes an equivalence between exchange algorithms (Definition~\ref{def:exchange-alg}) and exchange policies (Definition~\ref{def:exchange-policy}).
+As we will see, this will enable us to leverage tools from optimal stopping to design a welfare-optimal exchange algorithm.
+
+% , shows that we 
+% can move back and forth between talking about exchange algorithms and exchange policies.
+% Concretely, given an exchange algorithm we can find an equivalent exchange policy and 
+% vice versa.
+% given an exchange policy we can find an equivalent exchange algorithm.
+
+\begin{restatable}{theorem}{equiv-alg-defs}
+    \label{thm:equiv-alg-defs}
+    Fix an exchange algorithm
+    \(
+        \rbr{
+            \cbr{
+                \algstatemapt
+            }_{\timeind\geq 0}, 
+            \cbr{
+                \algstopmapt
+            }_{\timeind\geq 0}
+        }
+        \in
+        \classalgs
+    \).
+    % as defined in Definition~\ref{def:exchange-alg}.
+    Then, we can construct an exchange policy
+    \(
+        \rbr{
+            \cbr{
+                \strategyt
+            }_{\timeind\geq 0},
+            \stoptime 
+        }
+        \in
+        \setexchangepolicies
+    \) 
+    such that 
+    % satisfying Definition~\ref{def:exchange-alg-as-policy} such that
+    % \begin{align*}
+    \(
+        \EE\sbr{
+            \rewardss{
+                \algstatett{\algendtime}
+            }
+        }
+        =
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+        }
+    \).
+    % \end{align*}
+    Conversely, if given an exchange policy
+    % as defined in Definition~\ref{def:exchange-alg-as-policy}.
+    \(
+        \rbr{
+            \cbr{
+                \strategyt
+            }_{\timeind\geq 0},
+            \stoptime 
+        }
+        \in
+        \setexchangepolicies
+    \) 
+    we can construct an exchange algorithm
+    \(
+        \rbr{
+            \cbr{
+                \algstatemapt
+            }_{\timeind\geq 0}, 
+            \cbr{
+                \algstopmapt
+            }_{\timeind\geq 0}
+        }
+        \in
+        \classalgs
+    \)
+    % satisfying Definition~\ref{def:exchange-alg} 
+    such that 
+    \(
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+        }
+        =
+        \EE\sbr{
+            \rewardss{
+                \algstatett{\algendtime}
+            }
+        }
+    \).
+    % In other words, exchange algorithms are equivalent to exchange policies.
+\end{restatable}  
+
+\begin{proof}
+    We start by constructing an exchange policy  
+    given an algorithm
+    \(
+        \rbr{
+            \cbr{
+                \algstatemapt
+            }_{\timeind\geq 0}, 
+            \cbr{
+                \algstopmapt
+            }_{\timeind\geq 0}
+        }
+    \).
+    Define 
+    % the sequence
+    \(
+        \rbr{
+            \cbr{
+                \strategyt
+            }_{\timeind\geq 0},
+            \stoptime
+        }
+    \) 
+    via
+    \(
+        \strategytt{0} = \zerotuple
+    \)
+    and
+    \begin{align*}
+    % \(
+        \qquad
+        \strategytt{\timeind+1}
+        =
+        \begin{cases}
+            \algstatemapt\rbr{
+                \cbr{
+                    \valaii{k}
+                }_{k=0}^{\numdataforatt{t}}
+                ,
+                \cbr{
+                    \valbjj{k}
+                }_{k=0}^{\numdataforbtt{t}}
+            }
+            & 
+            \text{ if } \timeind < \algendtime
+            \\
+            \rbr{
+                \numdataa,\numdatab
+            }
+            &
+            \text{ if } \timeind \geq \algendtime
+        \end{cases}  
+    \end{align*}  
+    along with setting
+    \(
+    % \begin{align*}
+        \stoptime
+        =
+        \algendtime
+        % =
+        % \inf\cbr{
+        %     t\in\NN_{\geq 0} :
+        %     \delta_{\timeind}\rbr{
+        %         \cbr{
+        %             \valaii{k}
+        %         }_{k=0}^{\numdataforatt{t}}
+        %         ,
+        %         \cbr{
+        %             \valbjj{k}
+        %         }_{k=0}^{\numdataforbtt{t}}
+        %     }=0
+        % }
+    \).
+
+    % \end{align*}  
+    We first argue
+    \(
+        \rbr{
+            \cbr{
+                \strategyt
+            }_{\timeind\geq 0},
+            \stoptime
+        }
+    \) 
+    is a well defined policy for 
+    \(
+        \osasstates=\setexchanges
+    \)
+    with the family of $\sigma$-algebras 
+    \(
+        \cbr{
+            \statefilts
+        }_{\exchange\in\setexchanges}
+    \)
+    given in~\eqref{eq:family-sig-alg}.
+    After we show 
+    \(
+        \rbr{
+            \cbr{
+                \strategyt
+            }_{\timeind\geq 0},
+            \stoptime
+        }
+    \) 
+    satisfies our additional two requirements to be an exchange policy
+
+    \begin{enumerate}
+        
+    \item
+        ($\strategyt\in\setexchanges$): 
+        By definition
+        \(
+            \strategytt{0}=\zerotuple\in\setexchanges
+        \).
+        For $\timeind\geq 0$, we want to show
+        \(
+            \strategytt{\timeind+1}\in\setexchanges
+        \).
+        If $\timeind\geq \algendtime$ then automatically
+        \(
+            \strategytt{\timeind+1}
+            =
+            \rbr{
+                \numdataa,\numdatab
+            }\in\setexchanges
+        \).
+        If $\timeind < \algendtime$, then $\timeind+1\leq \algendtime$ and
+        \[
+            \strategytt{\timeind+1}
+            =
+            \algstatemapt\rbr{
+                \cbr{
+                    \valaii{k}
+                }_{k=0}^{\numdataforatt{t}}
+                ,
+                \cbr{
+                    \valbjj{k}
+                }_{k=0}^{\numdataforbtt{t}}
+            }
+            =
+            \algstatett{\timeind+1} .
+            % \rbr{
+            %     \numdataforatt{\timeind+1},
+            %     \numdataforbtt{\timeind+1}
+            % } .
+        \]
+        From Definition~\ref{def:exchange-alg}, we have
+        \(
+            \algstatett{k}
+            <
+            \algstatett{k+1}
+            % \rbr{
+            %     \numdataforatt{k},
+            %     \numdataforbtt{k}
+            % }
+            % <
+            % \rbr{
+            %     \numdataforatt{k+1},
+            %     \numdataforbtt{k+1}
+            % }
+        \)
+        and 
+        \(
+            % \rbr{
+            %     \numdataforatt{\algendtime},
+            %     \numdataforbtt{\algendtime}
+            % }
+            \algstatett{\algendtime}
+            \leq
+            \rbr{
+                \numdataa,\numdatab
+            }
+        \). 
+        Therefore, 
+        \(
+            \strategytt{\timeind+1}
+            =
+            \algstatett{\timeind+1}
+            \leq
+            \algstatett{\algendtime}
+            \leq
+            \rbr{
+                \numdataa,\numdatab
+            }
+        \)
+        and so 
+        \(
+            \strategytt{\timeind+1}
+            \in\setexchanges
+        \).
+
+        \item
+        ($\strategyt\leq\strategytt{\timeind+1}$):
+        For $\timeind\geq \algendtime$, $\strategytt{\timeind+1}$ is constant so this
+        holds automatically. For $\timeind<\algendtime$,
+        Definition~\ref{def:exchange-alg} requires
+        \(
+            \strategyt
+            =
+            \algstatet
+            % \rbr{
+            %     \numdataforat,
+            %     \numdataforbt
+            % }
+            <
+            % \rbr{
+            %     \numdataforatt{\timeind+1},
+            %     \numdataforbtt{\timeind+1}
+            % }
+            \algstatett{\timeind+1}
+            =
+            \strategytt{\timeind+1}
+        \). 
+    
+        \item 
+        ($\strategytt{\timeind+1}$
+        is
+        \(
+            \statefiltss{
+                \strategyt
+            }
+        \)-measurable): 
+        Notice that we can rewrite $\strategytt{\timeind+1}$ as
+        \[
+            \strategytt{\timeind+1}
+            =
+                1_{
+                    \cbr{
+                        \timeind < \algendtime
+                    }
+                }
+                % \cdot
+                \algstatemapt\rbr{
+                    \cbr{
+                        \valaii{k}
+                    }_{k=0}^{\numdataforatt{t}}
+                    ,
+                    \cbr{
+                        \valbjj{k}
+                    }_{k=0}^{\numdataforbtt{t}}
+                }
+                +
+                1_{
+                    \cbr{
+                        \timeind \geq \algendtime
+                    }
+                }
+                % \cdot
+                \rbr{
+                    \numdataa,\numdatab
+                } .
+        \]
+        We claim that 
+        \(
+            \cbr{\timeind<\algendtime}
+            \in
+            \statefiltss{
+                \strategyt
+            }
+        \). To see this, observe that
+        \[
+            \cbr{\timeind<\algendtime}
+            =
+            \bigcap_{\ell=0}^\timeind
+            \cbr{
+                \algstopmaptt{\ell}\rbr{
+                    \cbr{
+                        \valaii{k}
+                    }_{k=0}^{\numdataforatt{\ell}}
+                    ,
+                    \cbr{
+                        \valbjj{k}
+                    }_{k=0}^{\numdataforbtt{\ell}}
+                }
+                = 1
+            } .
+        \]
+        and from the definition of the filtration in
+        ~\eqref{eq:family-sig-alg}
+        \[
+            \sigma\rbr{
+                \cbr{
+                    \valaii{k}
+                }_{k=0}^{\numdataforatt{\ell}}
+                ,
+                \cbr{
+                    \valbjj{k}
+                }_{k=0}^{\numdataforbtt{\ell}}
+            }
+            =
+            \statefiltss{
+                \rbr{
+                    \numdataforatt{\ell},
+                    \numdataforbtt{\ell}
+                }
+            }
+        \]
+        so each respective event in the union is 
+        \(
+            \statefiltss{
+                \rbr{
+                    \numdataforatt{\ell},
+                    \numdataforbtt{\ell}
+                }
+            }
+        \)-measurable. Since $\algstatett{1}\leq\algstatett{2}$ if and only if 
+        \(
+            \statefiltss{
+                \algstatett{1}
+            }
+            \subseteq
+            \statefiltss{
+                \algstatett{2}
+            }
+        \), we have 
+        \(
+            \statefiltss{
+                \rbr{
+                    \numdataforatt{\ell},
+                    \numdataforbtt{\ell}
+                }
+            }
+            \subseteq
+            \statefiltss{
+                \rbr{
+                    \numdataforat,
+                    \numdataforbt
+                }
+            }
+            =
+            \statefiltss{
+                \strategyt
+            }
+        \), which implies
+        \(
+            \cbr{
+                % \stoptime\leq\timeind
+                \timeind < \algendtime
+            }
+        \)
+        is 
+        \(
+            \statefiltss{
+                \strategyt
+            }
+        \)-measurable.
+        Since 
+        \[
+            \sigma\rbr{
+                \cbr{
+                    \valaii{k}
+                }_{k=0}^{\numdataforat}
+                ,
+                \cbr{
+                    \valbjj{k}
+                }_{k=0}^{\numdataforbt}
+            }
+            =
+            \statefiltss{
+                \rbr{
+                    \numdataforat,
+                    \numdataforbt
+                }
+            },
+        \]
+        we get 
+        \(
+            \algstatemapt\rbr{
+                \cbr{
+                    \valaii{k}
+                }_{k=0}^{\numdataforatt{t}}
+                ,
+                \cbr{
+                    \valbjj{k}
+                }_{k=0}^{\numdataforbtt{t}}
+            }
+        \)
+        is 
+        \(
+            \statefiltss{
+                \rbr{
+                    \numdataforat,
+                    \numdataforbt
+                }
+            }
+        \)-measurable, thus 
+        $\strategytt{\timeind+1}$ is too as the composition and product of measurable functions.
+
+
+        % \mycomment{need to argue that the selection is also measurable}
+
+        % This holds automatically for $\timeind\geq\algendtime$ since 
+        % $\strategytt{\timeind+1}$ is constant. For $\timeind<\algendtime$,
+        % $\strategytt{\timeind+1}$ is a measurable function of 
+        % \(
+        %     \rbr{
+        %         \cbr{
+        %             \valaii{k}
+        %         }_{k=0}^{\numdataforatt{t}}
+        %         ,
+        %         \cbr{
+        %             \valbjj{k}
+        %         }_{k=0}^{\numdataforbtt{t}}
+        %     }
+        % \).
+        % This means $\strategytt{\timeind+1}$ is 
+        % \(
+        %     \sigma\rbr{
+        %         \cbr{
+        %             \valaii{k}
+        %         }_{k=0}^{\numdataforatt{t}}
+        %         ,
+        %         \cbr{
+        %             \valbjj{k}
+        %         }_{k=0}^{\numdataforbtt{t}}
+        %     }
+        % \)-measurable.
+        % Moreover, from the definition of the filtration in~\eqref{eq:family-sig-alg},
+        % \[
+        %     \sigma\rbr{
+        %         \cbr{
+        %             \valaii{k}
+        %         }_{k=0}^{\numdataforatt{t}}
+        %         ,
+        %         \cbr{
+        %             \valbjj{k}
+        %         }_{k=0}^{\numdataforbtt{t}}
+        %     }
+        %     =
+        %     \statefiltss{
+        %         \rbr{
+        %             \numdataforat,\numdataforbt
+        %         }
+        %     }   
+        %     =
+        %     \statefiltss{
+        %         \strategyt
+        %     } .
+        % \]
+        % % so $\strategytt{\timeind+1}$
+        % % is
+        % % \(
+        % %     \statefiltss{
+        % %         \strategyt
+        % %     }
+        % % \)-measurable
+
+        \item
+        \big($\stoptime$ is a stopping time w.r.t. the filtration
+        \(
+            \cbr{
+                \timefiltt
+            }_{\timeind\geq 0}
+            =
+            \cbr{
+                \statefiltss{
+                    \strategyt
+                }
+            }_{\timeind\geq 0}
+        \)\big):
+        Start by rewriting
+        \[
+            \cbr{
+                \stoptime\leq\timeind
+            }
+            =
+            \bigcup_{\ell=0}^\timeind
+            \cbr{
+                \algstopmaptt{\ell}\rbr{
+                    \cbr{
+                        \valaii{k}
+                    }_{k=0}^{\numdataforatt{\ell}}
+                    ,
+                    \cbr{
+                        \valbjj{k}
+                    }_{k=0}^{\numdataforbtt{\ell}}
+                }
+                = 0
+            } .
+        \]
+        Now notice that 
+        \[
+            \sigma\rbr{
+                \cbr{
+                    \valaii{k}
+                }_{k=0}^{\numdataforatt{\ell}}
+                ,
+                \cbr{
+                    \valbjj{k}
+                }_{k=0}^{\numdataforbtt{\ell}}
+            }
+            =
+            \statefiltss{
+                \rbr{
+                    \numdataforatt{\ell},
+                    \numdataforbtt{\ell}
+                }
+            }
+        \]
+        so each respective event in the union is 
+        \(
+            \statefiltss{
+                \rbr{
+                    \numdataforatt{\ell},
+                    \numdataforbtt{\ell}
+                }
+            }
+        \)-measurable. Since $\algstatett{1}\leq\algstatett{2}$ if and only if 
+        \(
+            \statefiltss{
+                \algstatett{1}
+            }
+            \subseteq
+            \statefiltss{
+                \algstatett{2}
+            }
+        \), we have 
+        \(
+            \statefiltss{
+                \rbr{
+                    \numdataforatt{\ell},
+                    \numdataforbtt{\ell}
+                }
+            }
+            \subseteq
+            \statefiltss{
+                \rbr{
+                    \numdataforat,
+                    \numdataforbt
+                }
+            }
+            =
+            \statefiltss{
+                \strategyt
+            }
+        \), which implies
+        \(
+            \cbr{
+                \stoptime\leq\timeind
+            }
+        \)
+        is 
+        \(
+            \statefiltss{
+                \strategyt
+            }
+            =
+            \timefiltt
+        \)-measurable.
+        Therefore, 
+        $\stoptime$ is a stopping time with respect to the filtration
+        \(
+            \cbr{
+                \timefiltt
+            }_{\timeind\geq 0}
+        \).
+        
+    \end{enumerate}  
+
+    We are left with the two additional requirements of 
+    Definition~\ref{def:exchange-policy}. For the first requirement, suppose 
+    that
+    \(
+        \strategyt <
+        \rbr{
+            \numdataa, \numdatab
+        }
+    \), then by construction this implies $\timeind<\algendtime=\stoptime$
+    so $\strategyt=\algstatet<\algstatett{\timeind+1}=\strategytt{\timeind+1}$
+    by Definition~\ref{def:exchange-alg}.
+    For the second requirement, we know that $\stoptime=\algendtime$ is finite or else 
+    it would contradict the fact that 
+    \(
+        \algstatett{\algendtime}
+        \leq
+        \rbr{
+            \numdataa,\numdatab
+        }
+    \), since $\cbr{\algstatet}_{\timeind\geq 0}$ is increasing.
+    From our construction, we have that 
+    \(
+        \rbr{
+            \algstatett{0},
+            \ldots,
+            \algstatett{\algendtime}
+        }
+        =
+        \rbr{
+            \strategytt{0},
+            \ldots,
+            \strategytt{\stoptime}
+        }
+    \), therefore
+    \(
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+        }
+        =
+        \EE\sbr{
+            \rewardss{
+                \algstatett{\algendtime}
+            }
+        }
+    \).
+
+    For the reverse direction, we create an exchange algorithm given an
+    exchange policy 
+    \(
+        \rbr{
+            \cbr{
+                \strategyt
+            }_{\timeind\geq 0},
+            \stoptime 
+        }
+    \).
+    Let 
+    \(
+        \rbr{
+            \numdataforat,
+            \numdataforbt
+        }
+        =
+        \strategyt
+    \).
+    From Definition~\ref{def:exchange-policy} we know $\stoptime$ is a stopping time,
+    thus
+    \(
+        1_{
+            \cbr{
+                \stoptime\neq\timeind
+            }
+        }
+    \)
+    is
+    \[
+        \statefiltss{\strategyt}
+        =
+        \sigma\rbr{
+            \cbr{
+                \valaii{k}
+            }_{k=0}^{\numdataforat}
+            ,
+            \cbr{
+                \valbjj{k}
+            }_{k=0}^{\numdataforbt}
+        }
+    \]measurable.
+    % is 
+    % \(
+    % \)-measurable, 
+    Therefore,
+    there exists a measurable function $\algstopmapt$ such that 
+    \[
+        1_{
+            \cbr{
+                \stoptime\neq\timeind
+            }
+        }
+        =
+        \algstopmapt\rbr{
+            \cbr{
+                \valaii{k}
+            }_{k=0}^{\numdataforat}
+            ,
+            \cbr{
+                \valbjj{k}
+            }_{k=0}^{\numdataforbt}
+        }.
+    \]
+    Similarly, since $\strategytt{\timeind+1}$ is 
+    \(
+        \statefiltss{\strategyt}
+    \)-measurable,
+    there exists a measurable function 
+    \(
+        \mbleexistsalgstatemapt
+    \)
+    such that
+    \[
+        \strategytt{\timeind+1}
+        =
+        \mbleexistsalgstatemapt
+        \rbr{
+            \cbr{
+                \valaii{k}
+            }_{k=0}^{\numdataforat}
+            ,
+            \cbr{
+                \valbjj{k}
+            }_{k=0}^{\numdataforbt}
+        } .
+    \]
+    Now define 
+    \(
+        \cbr{
+            \algstatemapt
+        }_{\timeind\geq 0}
+    \) 
+    via
+    \[
+        \algstatemapt
+        =
+        \begin{cases}
+            \mbleexistsalgstatemapt
+            &
+            \text{if }~~~
+            \algstatet < 
+            \rbr{
+                \numdataa,\numdatab
+            }
+            % \forall r\in\cbr{0,\ldots,\timeind}
+            % \algstopmapt\rbr{
+            %     \cbr{
+            %         \valaii{k}
+            %     }_{k=0}^{\numdataforatt{r}}
+            %     ,
+            %     \cbr{
+            %         \valbjj{k}
+            %     }_{k=0}^{\numdataforbtt{r}}
+            % }= 0
+            \\
+            \algstatet+(1,1)
+            & 
+            \text{otherwise}
+        \end{cases} .
+    \]
+    By the requirement that
+    \(
+        \strategyt < \strategytt{\timeind+1}
+    \)
+    for 
+    \(
+        \strategyt <
+        \rbr{
+            \numdataa,\numdatab
+        }
+    \), we get
+    $\algstatet <\algstatett{\timeind+1}$.
+    Moreover, by our construction
+    \(
+        \rbr{
+            \algstatett{0},
+            \ldots,
+            \algstatett{\algendtime}
+        }
+        =
+        \rbr{
+            \strategytt{0},
+            \ldots,
+            \strategytt{\stoptime}
+        },
+    \)
+    % we also have that 
+    which implies
+    \(
+        \algstatett{\algendtime}
+        \leq
+        \rbr{
+            \numdataa,\numdatab
+        }
+    \)
+    and 
+    \(
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+        }
+        =
+        \EE\sbr{
+            \rewardss{
+                \algstatett{\algendtime}
+            }
+        }
+    \).
+\end{proof}  
+
+Therefore, going forward, we will refer to exchange algorithms and exchange policies interchangeably.
+
+% \mycomment{delete below ->}
+% \begin{restatable}{definition}{exchange-alg-as-policy2}
+%     \label{def:exchange-alg-as-policy2} 
+%     A resource exchange algorithm is a tuple 
+%     \(
+%         \rbr{
+%             \cbr{
+%                 \strategyt
+%             }_{\timeind\geq 0},
+%             \stoptime 
+%         }
+%     \).
+%     Here
+%     \(
+%         \strategyt\in\setexchanges
+%     \)
+%     is a non-decreasing sequence
+%     satisfying
+%     \begin{align*}
+%         \strategytt{0}=0,
+%         \quad
+%         \strategytt{\timeind+1}
+%         \text{ is }
+%         \statefiltss{
+%             \strategyt
+%         }\text{-measurable},
+%         \quad
+%         % \text{and }
+%         \strategyt < \strategytt{\timeind+1}
+%         \text{ for }
+%         \strategyt < \rbr{
+%             \numdataa,\numdatab
+%         },
+%     \end{align*}  
+%     and $\stoptime$ is a finite stopping time with respect to the filtration 
+%     \(
+%         \cbr{
+%             \timefiltt
+%         }_{\timeind\geq 0}
+%         =
+%         \cbr{
+%             \statefilt_{
+%                 \strategyt
+%             }
+%         }_{\timeind\geq 0}
+%     \)
+%     as given in~\eqref{eq:family-sig-alg}.
+% \end{restatable}  
+% \mycomment{delete above <-}
+
+% Definition~\ref{def:exchange-alg-as-policy} is exactly the definition of a policy in~\citep{mandelbaum1981optimal}
+% where the state space is $\setexchanges$, and the family of $\sigma$-algebras over the state space is 
+% \(
+%     \cbr{
+%         \statefilts
+%     }_{\exchange\in\setexchanges}
+% \).
+% If, in the language of~\citep{mandelbaum1981optimal}, 
+
+\subsection{Reducing Optimal Exchange Algorithm Design to Optimal Stopping}
+\label{subsec:reduction-to-optimal-stopping}
+
+We will now show that 
+by defining the reward for an exchange $\exchange\in\setexchanges$ to be 
+$\rewards$, 
+the problem of designing an optimal exchange algorithm $\alg\in\classalgs$,
+will reduce to solving an optimal stopping time problem over $\setexchanges$.
+Before doing this, we first introduce a 
+% few necessary concepts 
+necessary concept
+from optimal stopping theory.
+% and~\citet{mandelbaum1981optimal}.
+
+\begin{restatable}{definition}{partially-ordered-snell-env}
+    \textup{
+        (Snell envelope, \citet{mandelbaum1981optimal})
+    }
+    For any $\osasstate\in\osasstates$, let
+    \[
+        \osassnellenvs
+        =
+        \esssup_{
+            \osaspolicy
+            \in
+            \osaspoliciess
+        }
+        \EE\sbr{
+            \osasrewardss{
+                \osasstrategytt{
+                    \osasstoptime
+                }
+            }
+            | \osasstatefilts
+        }
+    \]
+    where 
+    $\osaspoliciess$ is the set of policies for which 
+    \(
+        \osasstrategytt{0} = \osasstate
+    \).
+    The Snell envelope is defined as the family 
+    \(
+        \cbr{
+            \osassnellenvs
+        }_{
+            \osasstate\in\osasstates
+        }
+    \).
+\end{restatable}  
+
+Intuitively, each $\osassnellenvs$ represents the best expected reward, given the information available
+at $\osasstate$, following policies that start at $\osasstate$. The definition of the Snell envelope 
+depends on the type of optimal stopping problem considered; however, it is usually difficult to calculate 
+$\osassnellenvs$ directly from the definiton. To remidy this, a dymanic programming equation is often
+proved. 
+This equation usually takes the following form: $\osassnellenvs$ is the maximum of stopping and accepting
+the current reward or the expected reward of ``proceeding optimally''.
+Using this, we now present an optimal exchange algorithm.
+
+
+% The idea is to show that $\osassnellenvs$ is the maximum of the following two choices: stop and accept the 
+% current reward or 
+
+% The following is such a result in the case of optimal stopping times over partially ordered sets.
+
+% \mycomment{move this to appendix but cite here, describe high level}
+% \kkcomment{do this.}
+
+% \begin{restatable}{theorem}{osas-dp-eq}
+%     \label{thm:osas-dp-eq}
+%     \textup{
+%         (\citet{mandelbaum1981optimal})
+%     }
+%     Let 
+%     \(
+%         \osasdirectsuccessorss{
+%             \osasstate
+%         }
+%         =
+%         \cbr{
+%             u> \osasstate: \sbr{\osasstate,u}=\cbr{\osasstate,u}
+%         } 
+%     \)
+%     be the set of direct successors for $\osasstate$, then
+%     \begin{align*}
+%         \osassnellenvs
+%         =
+%         \max
+%         \cbr{
+%             \osasrewards,
+%             \EE\sbr{
+%                 \osassnellenvss{u}
+%                 | 
+%                 \osasstatefilts
+%             }
+%             : u\in
+%             \osasdirectsuccessorss{
+%                 \osasstate
+%             }
+%         }
+%         \quad
+%         \text{and}
+%         \quad
+%         \EE\sbr{
+%             \osassnellenvss{0}
+%         }
+%         =
+%         \sup_{
+%             \osaspolicy\in\osaspolicies
+%         }
+%         \EE\sbr{
+%             \osasrewardss{
+%                 \osasstrategytt{
+%                     \osasstoptime
+%                 }
+%             }
+%         }
+%         .
+%     \end{align*}  
+% \end{restatable}
+
+% The first part of this result says that the best expected reward of a policy which starts from state
+% $\osasstate\in\osasstates$ is the maximum of the reward available from stopping at $\osasstate$,
+% $\osasrewards$, and the best 
+% expected reward among policies starting at a successor $u$, conditioned on the information 
+% available at $\osasstate$. The second part shows that $\osassnellenvss{0}$ characterizes the 
+% performance of an optimal policy. Using this, we now present an optimal exchange algorithm,
+
+% \mycomment{remove all the tildes? Unnecessary clutter? I did this with the IC section}
+
+% \kkcomment{Since this is a key result of the paper, you can also move the IR rsult and proof into this theorem. Currently, it looks very disjointed. Also, better to state this in a way where you are presenting the }
+
+\begin{restatable}{theorem}{opt-alg}
+    \label{thm:opt-alg}
+    % In the setting of~\citep{mandelbaum1981optimal}, 
+    Let $\osasstates=\setexchanges$, $\osasrewards=\rewards$,
+    and the family 
+    \(
+        \cbr{
+            \statefilts
+        }_{\exchange\in\setexchanges}
+    \) be given by~\eqref{eq:family-sig-alg}.
+    Define
+    the policy
+    \(
+        \optexpolicy=
+        \rbr{
+            \cbr{
+                \optstrategyt
+            }_{\timeind\geq 0},
+            \optstoptime
+        }
+    \)
+    via
+    %  $\strategytt{0}=0$, for $\timeind\geq 1$
+    \begin{align*}
+        \optstrategytt{0} = (0,0),
+        \quad
+        % \text{for } \timeind\geq 1
+        \optstrategytt{\timeind+1}
+        =
+        \argmax_{
+            \nextexchange\in 
+            \directsuccessorss{
+                \optstrategyt
+            }
+        }
+        \EE\sbr{
+            \snellenvss{\nextexchange}
+            | \timefiltt
+        }
+        ~~~\text{ for }~~~~\timeind\geq 0,
+        % \quad
+        % \text{and}
+        % \quad
+        % \stoptime
+    \end{align*}  
+    % where 
+    % \(
+    %     \directsuccessorss{
+    %         % \optstrategyt
+    %         \exchange
+    %     }
+    %     =
+    %     \cbr{
+    %         \exchange + (1,0),
+    %         \exchange + (0,1)
+    %     }
+    % \),
+    and 
+    \(
+        \optstoptime
+        =
+        \inf
+        \cbr{
+            t\in\NN_{\geq 0} :
+            \snellenvss{
+                \optstrategyt
+            }
+            =
+            \rewardss{
+                \optstrategyt
+            }
+        }
+    \). 
+    Then $\optexpolicy\in\setexchangepolicies$ and is optimal, i.e.
+    % \begin{align*}
+    \(
+        \EE\sbr{
+            \rewardss{
+                \optstrategytt{\optstoptime}
+            }
+        }
+        =
+        \sup_{
+            % \rbr{
+            %     \cbr{\strategyt}_{\timeind\geq 0},
+            %     \stoptime
+            % }
+            % \in\classalgs
+            \exchangepolicy
+            \in
+            \setexchangepolicies
+        }
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+        }
+    \). 
+    Moreover if
+    for the choice 
+    of welfare function $\welfarefunc$,
+    \[
+        \EE\sbr{
+            \welfarefunc\rbr{
+                \utilass{
+                    \optstrategytt{\optstoptime}
+                },
+                \utilbss{
+                    \optstrategytt{\optstoptime}
+                }
+            }
+        }
+        \geq 0
+        ~~~
+        \Rightarrow
+        ~~~
+        \EE\sbr{
+            \utilass{
+                \optstrategytt{\optstoptime}
+            }
+        },
+        \EE\sbr{
+            \utilbss{
+                \optstrategytt{\optstoptime}
+            }
+        }
+        \geq 0
+    \]
+    then $\optexpolicy$ is individually rational.
+\end{restatable}  
+\begin{proof}
+    We first verify that $\optexpolicy$ is a well defined policy.
+    Since 
+    \(
+        \timefiltt
+        =
+        \statefiltss{
+            \optstrategyt
+        }
+    \),
+    \(
+        \optstrategytt{\timeind+1}
+    \)
+    is the argmax of a finite number of
+    \(
+        \statefiltss{
+            \optstrategyt
+        }
+    \)-measurable random variables, 
+    and thus 
+    \(
+        \optstrategytt{\timeind+1}
+    \)
+    is
+    \(
+        \statefiltss{
+            \optstrategyt
+        }
+    \)-measurable.
+    From the definition of 
+    \(
+        \directsuccessorss{
+            \optstrategyt
+        }
+    \), it follows that
+    \(
+        \optstrategyt
+        \leq
+        \optstrategytt{\timeind+1}
+    \).
+    Now observe that 
+    % \begin{align*}
+    \(
+        \cbr{
+            \optstoptime\leq \timeind
+        }
+        =
+        \bigcup_{k=0}^\timeind
+        \cbr{
+            \snellenvss{
+                \optstrategytt{k}
+            }
+            =
+            \rewardss{
+                \optstrategytt{k}
+            }
+        }
+    \)
+    and 
+    \(
+        \cbr{
+            \snellenvss{
+                \optstrategytt{k}
+            }
+            =
+            \rewardss{
+                \optstrategytt{k}
+            }
+        }
+        \in
+        \timefilttt{k}
+        \subseteq
+        \timefiltt
+    \)
+    by the definition in~\eqref{eq:family-sig-alg}.
+    Thus
+    \(
+        \cbr{
+            \optstoptime\leq \timeind
+        }
+        \in
+        \timefiltt
+    \)
+    so $\optstoptime$ is a well defined stopping time with respect to 
+    \(
+        \cbr{
+            \timefiltt
+        }_{\timeind\geq 0}
+    \).
+
+    We now argue $\optexpolicy$ is a valid exchange policy. Since at time $\timeind\geq 0$ the next exchange
+    is selected from 
+    \(
+        \directsuccessorss{
+            \optstrategyt
+        }
+    \),
+    we have
+    \(
+        \optstrategyt < \optstrategytt{\timeind+1} 
+    \).
+    Now suppose that $\optstoptime$ is not finite. Then, for sufficiently a sufficiently large $T$,
+    we would have 
+    \(
+        \optstrategytt{T}
+        =
+        \rbr{
+            \numdataa,\numdatab
+        }
+    \).
+    Since 
+    \(
+        \directsuccessorss{
+            \optstrategytt{T}
+        }
+        =
+        \varnothing
+    \),
+    Theorem~\ref{thm:osas-dp-eq}
+    implies that 
+    \(
+        \snellenvss{
+            \optstrategytt{T}
+        }
+        =
+        \rewardss{
+            \optstrategytt{T}
+        }
+    \), so $\optstoptime$ is forced to be finite.
+
+    By construction, $\optexpolicy$
+    is the natural policy which satisfies conditions~\eqref{eq:osas-thm2-cond1}--\eqref{eq:osas-thm2-cond3}.
+    %  (2.5)--(2.7) in~\citep{mandelbaum1981optimal} 
+    %  \kkcomment{State the theorems you are using in the appendix and refer to the conditions here.}. 
+    Therefore, together with the fact that $\optstoptime$ is finite, we can apply 
+    Theorem~\ref{thm:osas-thm2}
+    % Theorem 2
+    % from~\citep{mandelbaum1981optimal} 
+    to conlude $\optexpolicy$ is an optimal policy, i.e.
+    \(
+        \EE\sbr{
+            \rewardss{
+                \optstrategytt{\optstoptime}
+            }
+        }
+        =
+        \sup_{
+            \apolicy\in
+            \osaspolicies
+        }
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+        }
+    \).
+    Since $\setexchangepolicies\subseteq\osaspolicies$, and $\optexpolicy\in\setexchangepolicies$ 
+    \[
+        \sup_{
+            \apolicy\in
+            % \classalgs
+            \setexchangepolicies
+        }
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+        }
+        \leq
+        \sup_{
+            \apolicy\in
+            \osaspolicies
+        }
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+        }
+        =
+        \EE\sbr{
+            \rewardss{
+                \optstrategytt{\optstoptime}
+            }
+        }
+        \leq
+        \sup_{
+            \apolicy\in
+            \setexchangepolicies
+        }
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+        } .
+    \]
+    Therefore
+    \(
+        \EE\sbr{
+            \rewardss{
+                \optstrategytt{\optstoptime}
+            }
+        }
+        =
+        \sup_{
+            % \rbr{
+            %     \cbr{\strategyt}_{\timeind\geq 0},
+            %     \stoptime
+            % }
+            % \in\classalgs
+            \exchangepolicy
+            \in
+            \setexchangepolicies
+        }
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+        }
+    \),
+    so $\optexpolicy$
+    is an optimal exchange policy.
+
+    For the second part of the claim,
+    consider the exchange policy which facilitates no exchanges, i.e.
+    \(
+        \altexchangepolicy
+        =
+        \rbr{
+            \altstrategytt{0} = (0,0),
+            \altstoptime = 0
+        } 
+    \).
+    Then by our normalization assumptions we have
+    \(
+        \valaii{0} = \valbjj{0} = 0
+    \)
+    which implies 
+    \(
+        \utilass{0}
+        =
+        \utilbss{0}
+        =
+        \welfarefunc\rbr{
+            \utilass{0},
+            \utilbss{0}
+        }
+        =0
+    \).
+    Therefore, since $\optexpolicy$ is optimal,
+    \(
+        0
+        =
+        \EE\sbr{
+            \rewardss{
+                \altstrategytt{\altstoptime}
+            }
+        }
+        \leq
+        \EE\sbr{
+            \rewardss{
+                \optstrategytt{\optstoptime}
+            }
+        }
+        =
+        \EE\sbr{
+            \welfarefunc\rbr{
+                \utilass{
+                    \optstrategytt{\optstoptime}
+                },
+                \utilbss{
+                    \optstrategytt{\optstoptime}
+                }
+            }
+        }
+    \),
+    so our assumption yields individual rationality.
+\end{proof}  
+
+It is worth pointing out that there are reasonable choices of welfare functions that satisfy the implication
+in the Theorem~\ref{thm:opt-alg}. 
+A simple example of such a welfare function is the egalitarian welfare
+\(
+    \welfarefunc\rbr{x,y}=\min(x,y)
+\)
+since for any random variables $X$ and $Y$,
+\(
+    \EE\sbr{
+        \min(X,Y)
+    }
+    \geq 0
+    \Rightarrow
+    \EE\sbr{X},
+    \EE\sbr{Y}
+    \geq 0
+\).
+
+
+\subsection{An example}
+\label{sec:algoexample}
+
+We now revisit Example~\ref{ex:multi-vs-single-round-alg} to demonstrate how Theorem~\ref{thm:opt-alg}
+is gives an optimal algorithm.
+We will show that the optimal exchange algorithm is given by
+    \(
+        \rbr{
+            \cbr{\algstatemapt}_{\timeind=0}^{1},
+            \cbr{\algstopmap}_{\timeind=0}^{2}
+        }
+    \)
+    where 
+    \begin{gather*}
+        \algstatemaptt{0}(0,0) = (1,0)
+        \qquad
+        \algstatemaptt{1}(1,0) = (1,1)
+        \\
+        \algstopmaptt{0}(0,0) = 1
+        \qquad
+        \algstopmaptt{1}(1,0) 
+        =
+        \begin{cases}
+            1 & \text{if } ~\valaii{1} = 1
+            \\
+            0 & \text{if } ~\valaii{1} = 0
+        \end{cases}  
+        \qquad
+        \algstopmaptt{2}(1,1) 
+        = 0 . 
+    \end{gather*}  
+    and moreover that,
+    \(
+        \EE\sbr{
+            \rewardss{
+                \algstatett{\algendtime}
+            }
+        }
+        =
+        \frac{1}{8}
+    \).
+
+% \begin{restatable}{claim}{two-bern-ex-opt-alg}
+%     \label{ex:two-bern-ex-opt-alg}
+%     % Let $\numdataa=\numdatab=1$.
+%     % Suppose that each competitor's value for the other's good is 
+%     % $\valaii{1},\valbjj{1}\drawniid\Bern(1/2)$ and assume $\valaii{0}=\valbjj{0}=0$.
+%     % Let the utilities and welfare be given by
+%     % \begin{align*}
+%     %     \utilas
+%     %     =
+%     %     \valai-\frac{1}{4}\valbj,
+%     %     \quad 
+%     %     \utilbs
+%     %     =
+%     %     \valbj-\frac{1}{4}\valai,
+%     %     \quad
+%     %     \text{and}
+%     %     \quad
+%     %     \welfarefunc(x,y)=\min(x,y) .
+%     % \end{align*}  
+%     Recall the environment from Example~\ref{ex:two-bern-ex-opt-alg}.
+%     The optimal exchange algorithm is given by
+%     \(
+%         \rbr{
+%             \cbr{\algstatemapt}_{\timeind=0}^{1},
+%             \cbr{\algstopmap}_{\timeind=0}^{2}
+%         }
+%     \)
+%     where 
+%     \begin{gather*}
+%         \algstatemaptt{0}(0,0) = (1,0)
+%         \qquad
+%         \algstatemaptt{1}(1,0) = (1,1)
+%         \\
+%         \algstopmaptt{0}(0,0) = 0
+%         \qquad
+%         \algstopmaptt{1}(1,0) 
+%         =
+%         \begin{cases}
+%             1 & \text{if } ~\valaii{1} = 0
+%             \\
+%             0 & \text{if } ~\valaii{1} = 1
+%         \end{cases}  
+%         \qquad
+%         \algstopmaptt{2}(1,1) 
+%         = 1 . 
+%     \end{gather*}  
+%     and 
+%     \(
+%         \EE\sbr{
+%             \rewardss{
+%                 \algstatett{\algendtime}
+%             }
+%         }
+%         =
+%         \frac{1}{8}
+%     \).
+% \end{restatable}  
+
+\begin{proof}
+    We will use Theorem~\ref{thm:opt-alg} to determine the optimal exchange policy which will correspond to 
+    the optimal exchange algorithm above. 
+    % \mycomment{add and thus is the opt alg by the corollary to add?}
+    To determine the optimal exchange policy, we first calculate the Snell envelope
+    \(
+        \cbr{
+            \snellenvs
+        }_{\exchange\in\setexchanges}
+    \) working backwards.
+
+    From Theorem~\ref{thm:osas-dp-eq} we have
+    % \begin{align*}
+    \(
+        \snellenvss{(1,1)}
+        =
+        \rewardss{(1,1)}
+    \)
+    % \end{align*}  
+    which gives
+    \begin{align*}
+        \snellenvss{(1,0)}
+        =
+        \max\rbr{
+            \rewardss{(1,0)},
+            \EE\sbr{
+                \snellenvss{(1,1)}
+                | \statefiltss{(1,0)}
+            }
+        }
+        =
+        \max\rbr{
+            \rewardss{(1,0)},
+            \EE\sbr{
+                \rewardss{(1,1)}
+                | \valaii{1}
+            }
+        }
+        \\
+        \snellenvss{(0,1)}
+        =
+        \max\rbr{
+            \rewardss{(0,1)},
+            \EE\sbr{
+                \snellenvss{(1,1)}
+                | \statefiltss{(0,1)}
+            }
+        }
+        =
+        \max\rbr{
+            \rewardss{(0,1)},
+            \EE\sbr{
+                \rewardss{(1,1)}
+                | \valbjj{1}
+            }
+        }
+    \end{align*}  
+    and thus by symmetry,
+    \begin{align*}
+        \snellenvss{(0,0)}
+        &=
+        \max\rbr{
+            \rewardss{(0,0)},
+            \EE\sbr{
+                \snellenvss{(1,0)}
+                | \statefiltss{(0,0)}
+            },
+            \EE\sbr{
+                \snellenvss{(0,1)}
+                | \statefiltss{(0,0)}
+            }
+        }
+        \\
+        &=
+        \max\rbr{
+            \rewardss{(0,0)},
+            \EE\sbr{
+                \snellenvss{(1,0)}
+            },
+            \EE\sbr{
+                \snellenvss{(0,1)}
+            }
+        }
+        \\
+        &=
+        \max\rbr{
+            0,
+            \EE\sbr{
+                \snellenvss{(1,0)}
+            }
+        } .
+    \end{align*}  
+    To determine
+    \(
+        \EE\sbr{
+            \rewardss{(1,1)}
+            | \valaii{1}
+        }
+    \), consider two cases.
+
+        If $\valaii{1}=0$ then $\rewardss{(1,1)}=0$ when $\valbjj{1}=0$, and 
+        $\rewardss{(1,1)}=-\frac{1}{4}$ when $\valbjj{1}=1$ so
+        \[
+            \EE\sbr{
+                \rewardss{(1,1)}
+                | \valaii{1}=0
+            }
+            =
+            \frac{1}{2}\cdot 0
+            +
+            \frac{1}{2}\cdot\rbr{-\frac{1}{4}} 
+            =
+            -\frac{1}{8}
+        \]
+
+        If $\valaii{1}=1$ then $\rewardss{(1,1)}=-\frac{1}{4}$ when $\valbjj{1}=0$, and 
+        $\rewardss{(1,1)}=\frac{3}{4}$ when $\valbjj{1}=1$ so
+        \[
+            \EE\sbr{
+                \rewardss{(1,1)}
+                | \valaii{1}=1
+            }
+            =
+            \frac{1}{2}\cdot \rbr{-\frac{1}{4}}
+            +
+            \frac{1}{2}\cdot\rbr{\frac{3}{4}} 
+            =
+            \frac{1}{4} .
+        \]
+
+    \noindent
+    Therefore, 
+    \(
+        \EE\sbr{
+            \rewardss{(1,1)}
+            | \valaii{1}
+        }
+        =
+        \frac{3}{8}\valaii{1}
+        -
+        \frac{1}{8}
+    \).
+    We use this to calculate
+    \begin{align*}
+        \EE\sbr{
+            \snellenvss{(1,0)}
+        }
+        &=
+        \max\rbr{
+            \rewardss{(1,0)},
+            \frac{3}{8}\valaii{1}
+            -
+            \frac{1}{8}
+        }
+        \\
+        &=
+        \frac{1}{4}
+        \max\rbr{
+            \min\rbr{
+                0,0
+            },
+            -
+            \frac{1}{8}
+        }
+        +
+        \frac{1}{4}
+        \max\rbr{
+            \min\rbr{
+                1, -\frac{1}{4}
+            },
+            \frac{3}{8}-\frac{1}{8}
+        }
+        \\
+        &~+
+        \frac{1}{4}
+        \max\rbr{
+            \min(0,0),
+            -\frac{1}{8}
+        }
+        +
+        \frac{1}{4}
+        \max\rbr{
+            \min\rbr{
+                1, -\frac{1}{4}
+            },
+            \frac{3}{8}-\frac{1}{8}
+        }
+        \\
+        &= 
+        \frac{1}{8}
+    \end{align*}  
+    and thus 
+    \(
+        \snellenvss{(0,0)}
+        =
+        \max\rbr{0,\frac{1}{8}}
+        =
+        \frac{1}{8}
+    \).
+
+    By definition, the policy starts at
+    \(
+        \optstrategytt{0}
+        =
+        (0,0)
+    \).
+    Because we define 
+    \(
+        \optstoptime
+        =
+        \inf
+        \cbr{
+            t\in\NN_{\geq 0} :
+            \snellenvss{
+                \optstrategyt
+            }
+            =
+            \rewardss{
+                \optstrategyt
+            }
+        }
+    \),
+    we have $\optstoptime>0$, i.e. the policy does not stop immediately and since 
+    \[
+        \optstrategytt{1}
+        =
+        \argmax_{
+            \nextexchange\in 
+            \cbr{
+                (1,0),(0,1)
+            }
+        }
+        \EE\sbr{
+            \snellenvss{\nextexchange}
+        }
+    \]
+    it proceeds to either $(1,0)$ $(0,1)$. Because of symmetry 
+    \(
+        \EE\sbr{
+            \snellenvss{(1,0)}
+        }
+        =
+        \EE\sbr{
+            \snellenvss{(0,1)}
+        }
+    \)
+    so without loss of generality $\optstrategytt{1}=(1,0)$.
+    At this point
+    \(
+        \optstoptime
+        =
+        1
+    \)
+    exactly when
+    \[
+        \rewardss{(1,0)}
+        \geq
+        \EE\sbr{
+            \rewardss{(1,1)}
+            | \valaii{1}
+        }
+        \iff
+        \valaii{1}=0,
+    \]
+    so the policy stops if $\valaii{1}=0$.
+    Otherwise, if $\valaii{1}=1$ the policy continues to
+    \[
+        \optstrategytt{2}
+        =
+        \argmax_{
+            \nextexchange\in 
+            \cbr{
+                (1,1)
+            }
+        }
+        \EE\sbr{
+            \snellenvss{\nextexchange}
+        }
+        =
+        (1,1)
+    \]
+    as the only remaining state.
+    Finally, if the policy continued, 
+    then $\optstoptime=2$
+    since $\snellenvss{(1,1)}=\rewardss{(1,1)}$.
+    Therefore, the $\optexpolicy$ corresponds to the exchange algorithm above.
+\end{proof}  
+
+For more complex models it may be difficult to analytically compute the condition expectations
+used to determine the sequence of exchanges
+\(
+    \cbr{
+        \optstrategyt
+    }_{\timeind\geq 0}
+\)
+and when to terminate the exchanges $\optstoptime$. This is a common phenomena in optimal 
+stopping, in which case numerical approximation methods such as Monte Carlo based techniques are 
+used~\citep{longstaff2001valuing, tsitsiklis2001regression, broadie1997pricing}.
+
+
+% \mycomment{add corollary that we have an opt exchange alg?}
+
+% \subsection{An IR Sufficient Condition}
+
+% \kkcomment{Move up to main theorem.}
+
+% In addition to being optimal, the following result shows that for a simple condition on the welfare function
+% $\welfarefunc(x,y)$, the algorithm above is also individually rational.
+
+% \begin{restatable}{proposition}{ir-welfare-condition}
+%     Let $\optalg\in\classalgs$ be the algorithm given in Theorem~\ref{thm:opt-alg}. 
+%     If for the choice 
+%     of welfare function $\welfarefunc$,
+%     \[
+%         % \EE\sbr{
+%         %     \rewardss{
+%         %         \optstrategytt{\optstoptime}
+%         %     }
+%         % }
+%         \EE\sbr{
+%             \welfarefunc\rbr{
+%                 \utilass{
+%                     \optstrategytt{\optstoptime}
+%                 },
+%                 \utilbss{
+%                     \optstrategytt{\optstoptime}
+%                 }
+%             }
+%         }
+%         \geq 0
+%         ~~~
+%         \Rightarrow
+%         ~~~
+%         \EE\sbr{
+%             \utilass{
+%                 \optstrategytt{\optstoptime}
+%             }
+%         },
+%         \EE\sbr{
+%             \utilbss{
+%                 \optstrategytt{\optstoptime}
+%             }
+%         }
+%         \geq 0
+%     \]
+%     then $\optalg$ is individually rational.
+% \end{restatable}  
+% \begin{proof}
+%     Consider the algorithm which facilitates no exchanges, i.e.
+%     \(
+%         \alg
+%         =
+%         \rbr{
+%             \strategytt{0} = (0,0),
+%             \stoptime = 0
+%         } 
+%     \).
+%     Then by our normalization assumptions we have
+%     \(
+%         \valaii{0} = \valbjj{0} = 0
+%     \)
+%     which implies 
+%     \(
+%         \utilass{0}
+%         =
+%         \utilbss{0}
+%         =
+%         \welfarefunc\rbr{
+%             \utilass{0},
+%             \utilbss{0}
+%         }
+%         =0
+%     \).
+%     Therefore, since $\optalg$ is optimal,
+%     \(
+%         0
+%         =
+%         \EE\sbr{
+%             \rewardss{
+%                 \strategytt{\stoptime}
+%             }
+%         }
+%         \leq
+%         \EE\sbr{
+%             \rewardss{
+%                 \optstrategytt{\optstoptime}
+%             }
+%         }
+%         =
+%         \EE\sbr{
+%             \welfarefunc\rbr{
+%                 \utilass{
+%                     \optstrategytt{\optstoptime}
+%                 },
+%                 \utilbss{
+%                     \optstrategytt{\optstoptime}
+%                 }
+%             }
+%         }
+%     \)
+%     ,
+%     so our assumption yields individual rationality.
+% \end{proof}  
+
+% A simple example of such a welfare function is 
+% \(
+%     \welfarefunc\rbr{x,y}=\min(x,y)
+% \)
+% since for any random variables $X$ and $Y$,
+% \(
+%     \EE\sbr{
+%         \min(X,Y)
+%     }
+%     \geq 0
+%     \Rightarrow
+%     \EE\sbr{X},
+%     \EE\sbr{Y}
+%     \geq 0
+% \).
+% \kkcomment{When you move this up, state that the other welfares Nash s.t IR or social welfare s.t IR also work.}
+% \mycomment{not necessarily true}
+
+\subsection{Impossibility Under Strategic Reporting}
+
+Thus far we have assumed that the agents report their valuations truthfully or that they can be publicly 
+verified. This assumption is necessary to design a performant exchange algorithm; otherwise, competitors 
+could misreport their valuations to manipulate the algorithm, increasing their own utility at the expense of overall welfare.
+The following result demonstrates that the gap between the optimal algorithm when competitors are truthful and the optimal
+algorithm when competitors are untruthful can be arbitrarily large.
+
+\begin{restatable}{proposition}{optTruthfulVsOptUntruthful}
+    \label{prop:opt-truthful-vs-opt-untruthful}
+    For any $k\geq 0$ there exists an environment such that  
+    \(
+        \EE\sbr{
+            \rewardss{
+                \optstrategytt{
+                    \optstoptime
+                }
+            }
+        }
+        -
+        \EE\sbr{
+            \rewardss{
+                \opttruthstrategytt{
+                    \opttruthstoptime
+                }
+            }
+        }
+        \geq k
+    \),
+    where 
+    \(
+        \optexpolicy
+        =
+        \rbr{
+            \cbr{
+                \optstrategyt
+            }_{\timeind\geq 0},
+            \optstoptime
+        }
+    \)
+    and 
+    \(
+        \opttruthexpolicy
+        =
+        \rbr{
+            \cbr{
+            \opttruthstrategyt
+            }_{\timeind\geq 0},
+            \opttruthstoptime
+        }
+    \)
+    are the optimal policies assuming and not assuming truthful reporting respectively.
+    % \kkcomment{This should be stated more clearly.
+    % You have defined $\optexpolicy$
+    % and 
+    % $\opttruthexpolicy$, but not used them. On the other hand, you haven't defined $\EE\sbr{
+    %         \rewardss{
+    %             \opttruthstrategytt{
+    %                 \opttruthstoptime
+    %             }
+    %         }
+    %     }$. }
+    % \mycomment{put =}
+\end{restatable}  
+\begin{proof}
+    Let $\numdataa=\numdatab=1$.
+    Consider the valuations
+    \begin{align*}
+        \valaii{0}=\valbjj{0}=0
+        \qquad
+        \valaii{1}
+        =
+        \begin{cases}
+            4k
+            &
+            \text{w.p. } \frac{1}{2}
+            \\
+            % \frac{k}{2}
+            2k
+            &
+            \text{w.p. } \frac{1}{2}
+        \end{cases}  
+        \qquad
+        \valbjj{1} = 4k
+    \end{align*}  
+    and let the competitors' utilities and the welfare function be given by
+    \begin{align*}
+        \utila(x,y) 
+        =
+        x-y
+        \qquad
+        \utilb(x,y)
+        =
+        \begin{cases}
+            0 
+            &
+            \text{if }
+            (y-x)\geq -2k
+            %  k\geq x-y
+            \\
+            2(y-x)
+            &
+            \text{otherwise}
+        \end{cases}  
+        \qquad
+        \welfarefunc(x,y)=x+y .
+    \end{align*}
+    First consider when competitors are truthful. 
+    Under this model, the optimal policy 
+    \(
+        \optexpolicy
+    \)
+    first gives $\competitora$ competitor $\competitorb$'s point,
+    if 
+    $\valaii{1}=2k$ 
+    then sharing terminates, otherwise $\competitorb$ is given
+    $\competitora$'s point to ensure $\competitorb$'s utility does not lead to a negative welfare.
+    Thus the expected welfare under this policy is 
+    \[
+        \EE\sbr{
+            \rewardss{
+                \stopstateforpolicy{
+                    \optexpolicy_k
+                }
+            }
+        }
+        =
+        \frac{1}{2}
+        \welfarefunc\rbr{
+            \utilass{
+                (1,0)
+            },
+            \utilbss{
+                (1,0)
+            }
+        }
+        +
+        \frac{1}{2}
+        \welfarefunc\rbr{
+            \utilass{
+                (1,1)
+            },
+            \utilbss{
+                (1,1)
+            }
+        }
+        =
+        \frac{1}{2}
+        \rbr{
+            % \frac{k}{2}
+            2k
+            + 0 
+        }
+        +
+        \frac{1}{2}
+        \rbr{
+            0 + 0
+        } 
+        % =\frac{k}{4}
+        =
+        k.
+    \] 
+    Now consider when competitors are untruthful. 
+    In this setting, the optimal truthful policy will
+    not always 
+    give $\competitorb$ competitor
+    $\competitora$'s point. This is because doing so will always lead to a welfare of no more than 0,
+    thus such a policy is no better than one which exchanges zero resources.
+    Now consider a policy which only gives $\competitorb$ the point based on what is reported as $\valaii{1}$.
+    In this case $\competitora$ is incentivized to always report the value for $\valaii{1}$ for which $\competitorb$
+    does not receive the point as it increases their utility. However, this leads to a negative welfare.
+
+    Therefore, the optimal policy when competitors are untruthul recommends no exchange so 
+    \(
+        \EE\sbr{
+            \rewardss{
+                \stopstateforpolicy{
+                    \opttruthexpolicy_k
+                }
+            }
+        }
+        =0
+    \)
+    and thus
+    \(
+        \EE\sbr{
+            \rewardss{
+                \optstrategytt{
+                    \optstoptime
+                }
+            }
+        }
+        -
+        \EE\sbr{
+            \rewardss{
+                \opttruthstrategytt{
+                    \opttruthstoptime
+                }
+            }
+        }
+        =k
+    \).
+\end{proof}  
+
+For any $k\geq 0$ the proof of Proposition~\ref{prop:opt-truthful-vs-opt-untruthful} constructs an environment
+where $\numdataa=\numdatab=1$ and $\valaii{1}$ is random but $\valbjj{1}$ is deterministic. When 
+competitors are truthful, an optimal algorithm
+relies on learning the realization of $\valaii{1}$ to determine whether to give $\competitorb$ competitor $\competitora$'s
+resource. However, when competitors may be untruthful,
+$\competitora$ is always incentivized to report whichever value leads to $\competitorb$ not obtaining
+the resource. In this case the optimal exchange algorithm is to not recommend any exchanges.

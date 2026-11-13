@@ -1,0 +1,216 @@
+\newcommand{\timeind}{t}
+
+\newcommand{\parahead}[1]{\vspace{0.1in}\noindent\textbf{#1. }}
+\newcommand{\subparahead}[1]{\vspace{0.07in}\noindent\emph{#1. }}
+\newcommand{\paraheadwnogap}[1]{\vspace{0.0in}\noindent\textbf{#1. }}
+\newcommand{\subparaheadwnogap}[1]{\vspace{0.0in}\noindent\emph{#1. }}
+
+
+\newcommand{\competitora}{a}
+\newcommand{\competitorb}{b}
+\newcommand{\arbitrarycompetitor}{z}
+
+% Valuations and utilities
+\newcommand{\numdataa}{n}
+\newcommand{\numdatab}{m}
+
+\newcommand{\numdatafora}{i}
+\newcommand{\numdataforatt}[1]{\numdatafora_{#1}}
+\newcommand{\numdataforat}{\numdataforatt{t}}
+
+\newcommand{\numdataforb}{j}
+\newcommand{\numdataforbtt}[1]{\numdataforb_{#1}}
+\newcommand{\numdataforbt}{\numdataforbtt{t}}
+
+\newcommand{\vala}{V^\competitora}
+\newcommand{\valaii}[1]{\vala_{#1}}
+\newcommand{\valai}{\valaii{i}}
+
+\newcommand{\valb}{V^\competitorb}
+\newcommand{\valbjj}[1]{\valb_{#1}}
+\newcommand{\valbj}{\valbjj{j}}
+
+
+\newcommand{\setexchanges}{\Scal}
+\newcommand{\exchange}{s}
+\newcommand{\exchangett}[1]{s_{#1}}
+\newcommand{\exchanget}{\exchangett{t}}
+
+\newcommand{\exchangea}{i}
+\newcommand{\exchangeb}{j}
+
+\newcommand{\utila}{U^\competitora}
+\newcommand{\utilass}[1]{\utila_{#1}}
+\newcommand{\utilas}{\utilass{s}}
+
+\newcommand{\utilb}{U^\competitorb}
+\newcommand{\utilbss}[1]{\utilb_{#1}}
+\newcommand{\utilbs}{\utilbss{s}}
+
+\newcommand{\prior}{D}
+\newcommand{\priora}{\prior^a}
+\newcommand{\priorb}{\prior^b}
+
+\newcommand{\compcoeff}{\alpha}
+
+\newcommand{\welfarefunc}{W}
+
+\newcommand{\reward}{Y}
+\newcommand{\rewardss}[1]{\reward_{#1}}
+\newcommand{\rewards}{\rewardss{s}}
+
+% Algorithm formulations
+% \newcommand{\sharingalg}{\pi}
+\newcommand{\algstatemap}{f}
+\newcommand{\algstatemaptt}[1]{f_{#1}}
+\newcommand{\algstatemapt}{\algstatemaptt{t}}
+
+\newcommand{\algstopmap}{\delta}
+\newcommand{\algstopmaptt}[1]{\algstopmap_{#1}}
+\newcommand{\algstopmapt}{\algstopmaptt{t}}
+
+\newcommand{\altalgstopmap}{\delta'}
+\newcommand{\altalgstopmaptt}[1]{\altalgstopmap_{#1}}
+\newcommand{\altalgstopmapt}{\altalgstopmaptt{t}}
+
+\newcommand{\algendtime}{T} % Used to be \tau
+\newcommand{\altalgendtime}{T'}
+
+\newcommand{\algstate}{s} % Used to be \sigma
+\newcommand{\algstatett}[1]{\algstate_{#1}}
+\newcommand{\algstatet}{\algstatett{t}}
+
+\newcommand{\timefilt}{\Gcal}
+\newcommand{\timefilttt}[1]{\timefilt_{#1}}
+\newcommand{\timefiltt}{\timefilttt{t}}
+
+\newcommand{\statefilt}{\Fcal}
+\newcommand{\statefiltss}[1]{\statefilt_{#1}}
+\newcommand{\statefilts}{\statefiltss{s}}
+
+\newcommand{\alg}{A}
+\newcommand{\altalg}{A'}
+\newcommand{\classalgs}{\Acal}
+\newcommand{\classicalgs}{\Acal^{\text{IC}}}
+
+\newcommand{\strategy}{\sigma}
+\newcommand{\strategytt}[1]{\strategy_{#1}}
+\newcommand{\strategyt}{\strategytt{t}}
+
+\newcommand{\altstrategy}{\sigma'}
+\newcommand{\altstrategytt}[1]{\altstrategy_{#1}}
+\newcommand{\altstrategyt}{\altstrategytt{\timeind}}
+
+\newcommand{\stoptime}{\tau}
+\newcommand{\altstoptime}{\tau'}
+
+
+\newcommand{\apolicy}{\pi} % for some reason \policy seems taken?
+\newcommand{\setpolicies}{\Pi}
+
+\newcommand{\exchangepolicy}{\pi}
+\newcommand{\altexchangepolicy}{\pi'}
+
+\newcommand{\setexchangepolicies}{\setpolicies^{\text{ex}}}
+\newcommand{\seticexchangepolicies}{\setpolicies^{\text{IC}}}
+
+% osas - stopping time paper
+\newcommand{\osasreward}{Z}
+\newcommand{\osasrewardss}[1]{\osasreward_{#1}}
+\newcommand{\osasrewards}{\osasrewardss{s}}
+
+\newcommand{\osasstrategy}{\sigma}
+\newcommand{\osasstrategytt}[1]{\osasstrategy_{#1}}
+\newcommand{\osasstrategyt}{\osasstrategytt{t}}
+
+\newcommand{\osasstoptime}{\tau}
+
+\newcommand{\osaspolicy}{\pi}
+\newcommand{\osasstate}{s}
+\newcommand{\osasstates}{S}
+
+\newcommand{\osaspolicies}{\Pi}
+\newcommand{\osaspoliciesss}[1]{\osaspolicies_{#1}}
+\newcommand{\osaspoliciess}{\osaspoliciesss{s}}
+
+\newcommand{\osassnellenv}{X}
+\newcommand{\osassnellenvss}[1]{\osassnellenv_{#1}}
+\newcommand{\osassnellenvs}{\osassnellenvss{s}}
+
+\newcommand{\osasstatefilt}{\Fcal}
+\newcommand{\osasstatefiltss}[1]{\osasstatefilt_{#1}}
+\newcommand{\osasstatefilts}{\osasstatefiltss{s}}
+
+\newcommand{\osasdirectsuccessorss}[1]{U(#1)}
+
+\newcommand{\snellenv}{X}
+\newcommand{\snellenvss}[1]{\snellenv_{#1}}
+\newcommand{\snellenvs}{\snellenvss{s}}
+
+
+\newcommand{\nextexchange}{u}
+
+\newcommand{\directsuccessorss}[1]{U(#1)}
+
+% \newcommand{\optalg}{\tilde{\alg}}
+\newcommand{\optalg}{\alg}
+% \newcommand{\optexpolicy}{\tilde{\apolicy}}
+\newcommand{\optexpolicy}{\apolicy}
+
+% \newcommand{\optstrategy}{\tilde{\sigma}}
+\newcommand{\optstrategy}{\sigma}
+\newcommand{\optstrategytt}[1]{\optstrategy_{#1}}
+\newcommand{\optstrategyt}{\optstrategytt{t}}
+
+% \newcommand{\optstoptime}{\tilde{\tau}}
+\newcommand{\optstoptime}{\tau}
+
+\newcommand{\zerotuple}{(0,0)}
+% \newcommand{\zeroabrev}{}
+
+\newcommand{\mbleexistsalgstatemap}{\tilde{\algstatemap}}
+\newcommand{\mbleexistsalgstatemapt}{\tilde{\algstatemapt}}
+
+% Notation for truthfulness proof
+\newcommand{\opttruthexpolicy}{\pi'}
+\newcommand{\opttruthexpolicykk}[1]{\opttruthexpolicy_{#1}}
+\newcommand{\opttruthexpolicyk}{\opttruthexpolicykk{k}}
+
+\newcommand{\opttruthstrategy}{\sigma'}
+\newcommand{\opttruthstrategytt}[1]{\opttruthstrategy_{#1}}
+\newcommand{\opttruthstrategyt}{\opttruthstrategytt{t}}
+
+\newcommand{\opttruthstoptime}{\tau'}
+
+\newcommand{\stopstateforpolicy}[1]{\alpha\rbr{#1}}
+
+\newcommand{\fixedpath}{P}
+
+\newcommand{\icsnellenv}{X}
+\newcommand{\icsnellenvpp}[1]{\icsnellenv_{#1}}
+\newcommand{\icsnellenvp}{\icsnellenvpp{\fixedpath}}
+
+\newcommand{\rewardbound}{C}
+
+% \newcommand{\policyfollowspath}[2]{#1\rbr{#2}}
+\newcommand{\policyfollowspath}[2]{#2\rbr{#1}}
+% \newcommand{\policyfollowspathpp}[2]{#2\rbr{#1}}
+
+\newcommand{\exchangeindexrange}[2]{\exchangett{#1:#2}}
+\newcommand{\strategyindexrange}[2]{\strategytt{#1:#2}}
+
+\newcommand{\existspolicymatchingpath}[1]{E\rbr{#1}}
+
+\newcommand{\validicextensions}{\Ucal}
+\newcommand{\validicextensionspp}[1]{\validicextensions_{#1}}
+
+\newcommand{\expolicymatchicopt}{\pi}
+% \newcommand{\expolicymatchicopt}{\pi}
+
+\newcommand{\lastfollowtime}{\xi}
+\newcommand{\lastfollowtimeii}[1]{\lastfollowtime_{#1}}
+\newcommand{\lastfollowtimei}{\lastfollowtimeii{i}}
+
+\newcommand{\lastcommonfollowtime}{\chi}
+
+\newcommand{\chosenpath}{\iota}

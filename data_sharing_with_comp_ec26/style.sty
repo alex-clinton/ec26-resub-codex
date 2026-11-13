@@ -1,0 +1,104 @@
+% \RequirePackage{amsmath}
+% \RequirePackage{amsthm}
+% \RequirePackage{amssymb}
+% \RequirePackage{bbm}
+% \RequirePackage{xcolor}
+\RequirePackage{thmtools}
+% \RequirePackage{hyperref}
+% % \RequirePackage[numbers]{natbib}
+% % \RequirePackage{subcaption}
+% \RequirePackage{graphicx}
+% \usepackage{algorithm}
+% \usepackage{algpseudocode}
+% \usepackage{hyperref}
+% \usepackage{xcolor}
+% \usepackage{centernot}
+
+% \setlength{\parindent}{0pt} % Remove indents for new paragraphs
+% \setlength{\parskip}{0.4em} % Change paragraph spacing
+
+% Theorem, Lemma, etc definitions
+% \declaretheorem[name=Theorem]{theorem}
+% \declaretheorem[name=Proposition]{proposition}
+% \declaretheorem[name=Definition]{definition}
+% \declaretheorem[name=Lemma]{lemma}
+% \declaretheorem[name=Example]{example}
+% \declaretheorem[name=Setup]{setup}
+% \declaretheorem[name=Remark]{remark}
+% \declaretheorem[name=Question]{question}
+% \declaretheorem[name=Idea]{idea}
+\declaretheorem[name=Assumption]{assumption}
+
+% Operators
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\arginf}{arginf}
+\DeclareMathOperator*{\argsup}{argsup}
+\DeclareMathOperator*{\esssup}{ess\hspace{0.08cm}sup}
+
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\EE}{\mathbb{E}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\ZZ}{\mathbb{Z}}
+
+\newcommand{\Acal}{\mathcal{A}}
+\newcommand{\Bcal}{\mathcal{B}}
+\newcommand{\Ccal}{\mathcal{C}}
+\newcommand{\Dcal}{\mathcal{D}}
+\newcommand{\Ecal}{\mathcal{E}}
+\newcommand{\Fcal}{\mathcal{F}}
+\newcommand{\Gcal}{\mathcal{G}}
+\newcommand{\Hcal}{\mathcal{H}}
+\newcommand{\Ical}{\mathcal{I}}
+\newcommand{\Jcal}{\mathcal{J}}
+\newcommand{\Kcal}{\mathcal{K}}
+\newcommand{\Lcal}{\mathcal{L}}
+\newcommand{\Mcal}{\mathcal{M}}
+\newcommand{\Ncal}{\mathcal{N}}
+\newcommand{\Ocal}{\mathcal{O}}
+\newcommand{\Pcal}{\mathcal{P}}
+\newcommand{\Qcal}{\mathcal{Q}}
+\newcommand{\Rcal}{\mathcal{R}}
+\newcommand{\Scal}{\mathcal{S}}
+\newcommand{\Tcal}{\mathcal{T}}
+\newcommand{\Ucal}{\mathcal{U}}
+\newcommand{\Vcal}{\mathcal{V}}
+\newcommand{\Wcal}{\mathcal{W}}
+\newcommand{\Xcal}{\mathcal{X}}
+\newcommand{\Ycal}{\mathcal{Y}}
+\newcommand{\Zcal}{\mathcal{Z}}
+
+% Brackets
+\newcommand{\rbr}[1]{\left(#1\right)}
+\newcommand{\sbr}[1]{\left[#1\right]}
+\newcommand{\cbr}[1]{\left\{#1\right\}}
+\newcommand{\nbr}[1]{\left\|#1\right\|}
+\newcommand{\abr}[1]{\left|#1\right|}
+
+% ~
+\newcommand{\td}[1]{\tilde{#1}}
+\newcommand{\wtd}[1]{\widetilde{#1}}
+
+% Probability
+\newcommand{\EEV}[1]{\mathop{\EE}_{#1}}
+
+\newcommand{\rightarrowsup}[1]{\overset{#1}{\longrightarrow}}
+\newcommand{\eqas}{\overset{a.s.}{=}}
+\newcommand{\neqas}{\overset{a.s.}{\neq}}
+\newcommand{\eqid}{\overset{d}{=}}
+\newcommand{\drawniid}{\overset{\text{i.i.d.}}{\sim}}
+
+\newcommand{\Unif}{\textup{Unif}}
+\newcommand{\Beta}{\textup{Beta}}
+\newcommand{\Bern}{\textup{Bern}}
+
+\newcommand{\as}{\text{a.s.}}
+
+
+% Misc
+\newcommand{\st}{\text{s.t.}}
+
+% Equation Numbering - Numbers only one equation in align*, equation*
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}

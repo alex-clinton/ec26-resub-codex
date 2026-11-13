@@ -1,0 +1,2229 @@
+\section{An Optimal IR and IC Resource Exchange Algorithm}
+\label{sec:opt-ic-alg}
+
+The previous section proves that,
+under the assumption that competitors do not exit the sharing algorithm early,
+we can construct an optimal exchange algorithm. Moreover, we have demonstrated a simple sufficient condition
+on the welfare function $\welfarefunc$ for which this optimal algorithm is also IR. A natural next question is 
+whether the algorithm is also automatically IC?
+The answer to this question turns out to be no and is illustrated by revisiting Example~\ref{ex:multi-vs-single-round-alg}. 
+
+\begin{restatable}{example}{opt-alg-not-always-ic}
+    Recall the environment from Example~\ref{ex:multi-vs-single-round-alg}. In~\S\ref{sec:algoexample}
+    %Example~\ref{ex:two-bern-ex-opt-alg}
+    we showed that the optimal exchange algorithm 
+    \(
+        \optalg
+        =
+        \rbr{
+            \cbr{\algstatemapt}_{\timeind=0}^{1},
+            \cbr{\algstopmap}_{\timeind=0}^{2}
+        }
+    \)
+    first gives $\competitora$ competitor $\competitorb$'s point,
+    and if $\valaii{1}=1$, competitor $\competitorb$ receives $\competitora$'s points. However, consider when
+    $\competitora$ exits sharing after receiving $\competitorb$ but before $\competitorb$ receives
+    $\competitora$'s point. This corresponds to the exit sequence 
+    \(
+        \rbr{
+            \altalgstopmaptt{0} = 0,
+            \altalgstopmaptt{1} = 1
+        }
+    \) so 
+    $\altalgendtime=1$ (see Definition~\ref{def:ic-exchange-alg}). But notice that since 
+    $\algendtime\geq 1$, 
+    % when $\competitora$ exits at $\timeind=1$
+    $\competitora$'s utility when exiting early is
+    \begin{align*}
+        \EE\sbr{
+            \utilass{
+                \algstatett{
+                    \algendtime\wedge\altalgendtime
+                }
+            }
+        }
+        =
+        \EE\sbr{
+            \utilass{
+                \algstatett{
+                    1
+                }
+            }
+        }
+        =
+        \EE\sbr{
+            \utilass{
+                (1,0)
+            }
+        }
+        =
+        \frac{1}{2}\cdot 1 + \frac{1}{2} \cdot 0
+        =
+        \frac{1}{2}
+    \end{align*}  
+    whereas if $\competitora$ does not exit early his utility is
+    \begin{align*}
+        \EE\sbr{
+            \utilass{
+                \algstatett{
+                    \algendtime
+                }
+            }
+        }
+        =
+        \frac{1}{2}\utila\rbr{0,0}
+        +
+        \frac{1}{2}\rbr{
+            \frac{1}{2}\utila\rbr{1,0}
+            +
+            \frac{1}{2}\utila\rbr{1,1}
+        }
+        =
+        0 + \frac{1}{4}+\frac{3}{16}
+        =
+        \frac{7}{16} .
+    \end{align*}  
+    Since $\competitora$ obtains a strictly higher expected utilty by exiting early, $\optalg$ is not IC 
+    according to Definition~\ref{def:ic-exchange-alg}
+\end{restatable}  
+
+\subsection{Reformulating IC as a Stopping Time Condition}
+
+% In order to analyze IC algorithms in the language of optimal stopping, we define 
+Previously, we simplified algorithm design by reformulating our problem in the language of optimal 
+stopping and showing a natural correspondence between exchange algorithms and exchange policies. 
+% To analyze IC algorithms, we now take the same approach; the following definition 
+We now take a similar approach and start by defining what it means for an exchange policy to be IC.
+% from which we can
+% to which there is a corresponding IC exchange algorithm.
+
+\begin{restatable}{definition}{ic-exchange-policy}
+    \label{def:ic-exchange-policy} 
+    Let 
+    \(
+        \exchangepolicy
+        =
+        \rbr{
+            \cbr{
+                \strategyt
+            }_{\timeind\geq 0},
+            \stoptime
+        }
+        \in\setexchangepolicies
+    \),
+    we say that $\exchangepolicy$ is IC if 
+    for any stopping time $\altstoptime$
+    with respect to the filtration
+    \(
+        \cbr{
+            \timefiltt
+        }_{\timeind\geq 0}
+        =
+        \cbr{
+            \statefiltss{
+                \strategyt
+            }
+        }_{\timeind\geq 0}
+    \),
+    \[
+        \EE\sbr{
+            \utilass{
+                \strategytt{
+                    \stoptime\wedge\altstoptime
+                }
+            }
+        }
+        \leq
+        \EE\sbr{
+            \utilass{
+                \strategytt{
+                    \stoptime
+                }
+            }
+        }
+        \quad
+        \text{and}
+        \quad
+        \EE\sbr{
+            \utilbss{
+                \strategytt{
+                    \stoptime\wedge\altstoptime
+                }
+            }
+        }
+        \leq
+        \EE\sbr{
+            \utilbss{
+                \strategytt{
+                    \stoptime
+                }
+            }
+        }.
+    \]
+    Let $\seticexchangepolicies$ denote the set of IC exchange policies. 
+    We say that $\exchangepolicy\in\seticexchangepolicies$
+    is IC optimal if 
+    \[
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+        }
+        =
+        \sup_{
+            \altexchangepolicy\in\seticexchangepolicies
+        }
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime'}'
+            }
+        } .
+    \]
+\end{restatable}  
+
+The definition above is the stopping time analogue of Definition~\ref{def:ic-exchange-alg}. At a high level
+it says that no matter what early exit strategy either competitor employs, they cannot improve their expected
+utility by stopping collaboration early. By repeating the arguments in Theorem~\ref{thm:equiv-alg-defs} we can show that 
+for any IC algorithm there is a corresponding IC policy with the same expected welfare and vice versa. Thus, 
+we will work with IC policies going forward.
+
+\subsection{Closure Under Pasting}
+
+% A common theme in optimal stopping is that 
+A useful property in optimal stopping problems is what we will refer to as closure under pasting. This property
+describes the fact that given any two stopping times $\tau$ and $\sigma$ with respect to a filtration $\cbr{\Fcal_n}_{n\geq 0}$,
+and an event $A\in\Fcal_\tau$ we can construct a new stopping time $\theta=1_A \tau+1_{A^c}\sigma$. Similarly,
+the results in~\citet{mandelbaum1981optimal} rely on an analogue of this property for policies, that a third policy can be created
+by pasting together two policies. More precisely we mean that for 
+$\exchange\in\setexchanges$, 
+$A\in\statefilts$,
+and 
+\(
+    \apolicy^i
+    =
+    \Big( 
+        \cbr{
+            \strategyt^i
+        }_{\timeind\geq 0}
+        \stoptime^i
+    \Big)
+    \in\osaspoliciesss{\exchange}
+\),
+$i\in\cbr{1,2}$,
+we can define 
+\(
+    \apolicy^3
+    =
+    \Big( 
+        \cbr{
+            \strategyt^3
+        }_{\timeind\geq 0}
+        \stoptime^3
+    \Big)
+    \in\osaspoliciesss{\exchange}
+\)
+via
+\[
+    \strategyt^3
+    =
+    \strategyt^1 1_A
+    +
+    \strategyt^2 1_{A^c}
+    \qquad
+    \stoptime^3
+    =
+    \stoptime^1 1_A
+    +
+    \stoptime^2 1_{A^c} .
+\]
+
+However, the following simple pathological example illustrates that we cannot have an analogous condition for the set
+of IC policies for every choice of environment.
+
+\begin{restatable}{example}{ic-pasting}
+    Let $\numdataa=3$ and $\numdatab=1$. Suppose the valuations are given by
+    \(
+        \valbjj{0}=0
+    \),
+    and
+    \begin{gather*}
+        \valaii{0}=0
+        \quad
+        \valaii{1}=1
+        \quad
+        \valaii{2}=2
+        % \begin{cases}
+        %     2
+        %     & 
+        %     \text{w.p. } \frac{1}{2}
+        %     \\
+        %     0
+        %     & 
+        %     \text{w.p. } \frac{1}{2}
+        % \end{cases}
+        \quad
+        \valaii{3}
+        =
+        % \abr{
+        %     \valaii{2}-2
+        % }
+        0
+        % \hspace{0.4cm}
+        \qquad
+        \valbjj{0}=0
+        \quad
+        \valbjj{1}=
+        \begin{cases}
+            1
+            & 
+            \text{w.p. } \frac{1}{2}
+            \\
+            0
+            & 
+            \text{w.p. } \frac{1}{2}
+        \end{cases}
+        % \\
+    \end{gather*}
+    and consider the utility/welfare functions 
+    \(
+        \utila(x,y)=x
+    \),
+    \(
+        \utilb(x,y)=y
+    \),
+    \(
+        \welfarefunc(x,y)
+        =
+        -x
+    \).
+    % \kkcomment{Reviewers will complain that this example is pathological since the welfare is decreasing with $x$. If you can redo a version with a more sensible welfare function, it would be more powerful.}
+    % and the welfare function
+    Now consider the following two IC policies 
+    \(
+        \exchangepolicy^1, \exchangepolicy^2\in\seticexchangepolicies
+    \)
+    given by
+    \begin{align*}
+        \strategytt{0}^1 
+        = 
+        \strategytt{0}^2 
+        =
+        (0,0)
+        \qquad
+        \strategytt{1}^1
+        =
+        \strategytt{1}^2
+        = (1,1)
+        \qquad
+        \strategytt{2}^1 
+        =
+        \begin{cases}
+            (2,1)
+            &
+            \text{if } \valbjj{1}=1
+            \\
+            (3,1)
+            &
+            \text{if } \valbjj{1}=0
+        \end{cases}  
+        \qquad
+        \strategytt{2}^2
+        =
+        \begin{cases}
+            (2,1)
+            &
+            \text{if } \valbjj{1}=0
+            \\
+            (3,1)
+            &
+            \text{if } \valbjj{1}=1
+        \end{cases}  .
+    \end{align*}  
+    and $\stoptime^1=\stoptime^2=2$.
+    Now consider 
+    \(
+        \exchangepolicy^3\in\setexchangepolicies
+    \)
+    given by
+    \[
+        \strategytt{0}^3
+        = 
+        (0,0)
+        \qquad
+        \strategytt{1}^3
+        = (1,1)
+        \qquad
+        \strategytt{2}^3
+        =
+        \strategytt{2}^1
+        1_{
+            \cbr{
+                \valbjj{1}= 0
+            }
+        }
+        +
+        \strategytt{2}^2
+        1_{
+            \cbr{
+                \valbjj{1}= 1
+            }
+        }
+        =
+        (3,1)
+    \]
+    and 
+    \(
+        \stoptime^3
+        =
+        \stoptime^1
+        1_{
+            \cbr{
+                \valbjj{1}= 0
+            }
+        }
+        +
+        \stoptime^2
+        1_{
+            \cbr{
+                \valbjj{1}= 1
+            }
+        }
+        = 2.
+    \)
+    The issue is now that using the exit strategy $\altstoptime=1$, i.e. leaving at $\timeind=1$, yields
+    a higher expected welfare for $\competitora$ since
+    \[
+        1
+        =
+        \EE\sbr{
+            \utilass{
+                (1,1)
+            }
+        }
+        =
+        \EE\sbr{
+            \utilass{
+                \strategytt{
+                    \stoptime^3\wedge\altstoptime
+                }^3
+            }
+        }
+        >
+        \EE\sbr{
+            \utilass{
+                \strategytt{
+                    \stoptime^3
+                }^3
+            }
+        }
+        =
+        \EE\sbr{
+            \utilass{
+                (3,1)
+            }
+        }
+        =0 .
+    \]
+    Thus $\exchangepolicy^3\not\in\seticexchangepolicies$.
+\end{restatable}  
+
+
+% If $\pi_1,\pi_2\in\Pi_s$ are policies starting at the same $s$, and $A\in\Fcal_s$ then
+% \[
+%     \alpha(\pi)=\alpha(\pi_1)1_A + \alpha(\pi_2)1_{A^c}\in\Pi_s
+%     \quad
+%     \tau=\tau_1 1_A + \tau_2 1_{A^c}
+%     \quad
+%     \sigma_t = \sigma^1_t 1_A + \sigma^2_t 1_{A^c}
+% \]
+
+In order have hope of designing an optimal IC policy, we need to make an assumption on the environment
+that rules out this type of phenomena.
+% \kkcomment{Consider emphasizing that such a phenomenon occurs only with pathological welfares, so the assumption is really ruling out such welfares. Is this true?}
+
+% \mycomment{fix formatting later?}
+\begin{restatable}{assumption}{ic-pasting}
+    \label{assum:ic-pasting}
+    Let 
+    \(
+        \fixedpath
+        =
+        \rbr{
+            \exchangett{0},
+            \ldots,
+            \exchanget
+        }
+    \)
+    be a fixed increasing path of points in $\setexchanges$ starting at $(0,0)$.
+    Let 
+    \(
+        \exchangepolicy^1,\exchangepolicy^2\in\seticexchangepolicies 
+    \)
+    and define the policy $\exchangepolicy^3$ to be whichever of $\exchangepolicy^1$ and $\exchangepolicy^2$
+    follows $\fixedpath$ for longer. In the case that both policies reach $\exchanget$ before terminating,
+    continue with policy
+    \(
+        \argmax_{
+            i\in\cbr{1,2}
+        }
+        \EE\sbr{
+            \rewardss{
+                \strategytt{
+                    \stoptime^i
+                }^i
+            }
+            |
+            \statefiltss{
+                \exchanget
+            }
+        }
+    \),
+    i.e.
+    whichever has the higher expected reward going forward.
+    We assume the environment is such that $\exchangepolicy^3\in\seticexchangepolicies$.
+% \mycomment{say this is spelled out in more detail in the appendix?}
+\end{restatable}  
+
+\subsection{A Conditionally Optimal IC Algorithm}
+
+Under the assumption from the previous section we will construct a policy whose expected welfare
+is 
+\(
+    \sup_{
+        \exchangepolicy\in\seticexchangepolicies
+    }
+    \EE\sbr{
+        \rewardss{
+            \strategytt{\stoptime}
+        }
+    }
+\). Thus when our constructed policy is IC, it will be IC optimal.
+Before providing this construction, we introduce some necessary results and notation,
+analogous to those given in Section~\ref{subsec:reduction-to-optimal-stopping}.
+
+
+
+\begin{restatable}{definition}{replace-later}
+    % constrained snell env?
+    Let 
+    \(
+        \fixedpath
+        =
+        \rbr{
+            \exchangett{0},
+            \ldots,
+            \exchanget
+        }
+    \)
+    be a fixed increasing path of points in $\setexchanges$ starting at $(0,0)$, and 
+    $\rewardbound > \abr{\rewards}$ be a bound on the rewards. Define
+    \begin{align*}
+        \icsnellenvp
+        =
+        \esssup_{
+            \exchangepolicy\in\seticexchangepolicies
+        }
+        \EE\sbr{
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy}
+            }
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+            -
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy}^c
+            }
+            \rewardbound
+            ~
+            |
+            ~
+            \statefiltss{\exchanget}
+        }
+    \end{align*}  
+    where 
+    \(
+        \policyfollowspath{\fixedpath}{\exchangepolicy}
+        =
+        \cbr{
+            \strategyindexrange{0}{\timeind}
+            =
+            \fixedpath,
+            % \exchangeindexrange{0}{\timeind},
+            \timeind\leq \stoptime
+        }
+    \)
+    is the event that $\exchangepolicy$ follows $\fixedpath$ prior to stopping and
+    \(
+        \strategyindexrange{0}{\timeind}
+    \) is shorthand for 
+    \(
+        \rbr{
+            \strategytt{0},\ldots,\strategytt{\timeind} 
+        }
+    \).
+\end{restatable}  
+
+Intuitively, each $\icsnellenvp$ represents the best expected reward for policies that have followed $\fixedpath$, 
+given the information available at the end of the path. 
+We will see that for $\icsnellenvp$ there is an analogous dynamic programming equation to
+the one in
+% In order to prove an analogue to 
+Theorem~\ref{thm:osas-dp-eq}.
+This result will be needed for our construction. 
+However, before proving it, we first need the following lemma.
+% we introduce the following dynamic programming equation.
+
+\begin{restatable}{lemma}{directed-upwards}
+    \label{lem:directed-upwards}
+    Suppose that Assumption~\ref{assum:ic-pasting} holds
+    and let 
+    \(
+        \fixedpath
+        =
+        \rbr{
+            \exchangett{0},
+            \ldots,
+            \exchanget
+        }
+    \)
+    be a fixed increasing path of points in $\setexchanges$ starting at $(0,0)$.
+    The family of random variables 
+    \begin{align*}
+        \cbr{
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy}
+            }
+            \EE\sbr{
+                \rewardss{
+                    \strategytt{\stoptime}
+                }
+                | \statefiltss{\exchanget}
+            }
+            -
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy}^c
+                \rewardbound
+            }
+            :
+            \exchangepolicy\in\seticexchangepolicies
+        }
+    \end{align*}  
+    is closed under maxima. 
+\end{restatable}  
+\begin{proof}
+    Our goal is to show that given any 
+    \(
+        \exchangepolicy_1,\exchangepolicy_2\in\seticexchangepolicies
+    \),
+    there exists
+    \(
+        \exchangepolicy_3\in\seticexchangepolicies
+    \)
+    such that
+    \begin{gather*}
+        \rbr{
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy_1}
+            }
+            \EE\sbr{
+                \rewardss{
+                    \stopstateforpolicy{
+                        \exchangepolicy_1
+                    }
+                }
+                | \statefiltss{\exchanget}
+            }
+            -
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy_1}^c
+            }
+            \rewardbound
+        }
+        \vee
+        \rbr{
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy_2}
+            }
+            \EE\sbr{
+                \rewardss{
+                    \stopstateforpolicy{
+                        \exchangepolicy_2
+                    }
+                }
+                | \statefiltss{\exchanget}
+            }
+            -
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy_2}^c
+            }
+            \rewardbound
+        }
+        \\
+        =
+        \rbr{
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy_3}
+            }
+            \EE\sbr{
+                \rewardss{
+                    \stopstateforpolicy{
+                        \exchangepolicy_3
+                    }
+                }
+                | \statefiltss{\exchanget}
+            }
+            -
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy_3}^c
+            }
+            \rewardbound
+        } .
+        \numberthis
+        \label{eq:closed-under-maxima}
+    \end{gather*}  
+    We will define
+    \(
+        \exchangepolicy_3
+        =
+        \rbr{
+            \cbr{
+                \strategyt^3
+            }_{\timeind\geq 0},
+            \stoptime^3
+        }
+    \)
+    to be whichever of policy 
+    \(
+        \exchangepolicy_1
+        =
+        \rbr{
+            \cbr{
+                \strategyt^1
+            }_{\timeind\geq 0},
+            \stoptime^1
+        }
+    \)
+    or
+    \(
+        \exchangepolicy_2
+        =
+        \rbr{
+            \cbr{
+                \strategyt^2
+            }_{\timeind\geq 0},
+            \stoptime^2
+        }
+    \)
+    adheres to $\fixedpath$ for longer. In the case that 
+    \(
+        \strategyindexrange{0}{\timeind}^1
+        =
+        \strategyindexrange{0}{\timeind}^2
+        =
+        \fixedpath
+    \)
+    and $\stoptime^1,\stoptime^2\geq\timeind$, we select the policy
+    given by 
+    \(
+        \argmax_{
+            i\in\cbr{1,2}
+        }
+        \EE\sbr{
+            \rewardss{
+                \stopstateforpolicy{\pi_i}
+            }
+            | \statefiltss{\exchanget}
+        }
+    \). 
+    In otherwords, if both policies follow $\fixedpath$, then we 
+    take the one which gives a better outlook for the reward. In the 
+    case that both policies do not complete following $\fixedpath$ at the
+    same time, we will set 
+    \(
+        \exchangepolicy_3
+        =
+        \exchangepolicy_1
+    \)
+    without loss of generality.
+
+    Formally, let 
+    \begin{align*}
+        \lastfollowtimei
+        =
+        \inf\cbr{
+            k\in\cbr{
+                0,\ldots,\timeind-1
+            }
+            :
+            \strategytt{k+1}^i
+            \neq
+            \exchangett{k+1}
+        }
+        \wedge
+        \stoptime^i
+    \end{align*}  
+    be the last time at which $\exchangepolicy_i$ is following $\fixedpath$
+    (here we let $\inf\varnothing=\timeind$). 
+    Thus 
+    \(
+        \lastcommonfollowtime
+        =
+        \lastfollowtimeii{1}
+        \wedge
+        \lastfollowtimeii{2}
+    \)
+    is the last time at which both policies are following $\fixedpath$.
+    Now let 
+    \begin{align*}
+        \chosenpath
+        =
+        \begin{cases}
+            1
+            & 
+            \text{if } \lastfollowtimeii{1} > \lastfollowtimeii{2}
+            \\
+            2
+            & 
+            \text{if } \lastfollowtimeii{1} < \lastfollowtimeii{2}
+            \\
+            \argmax_{
+                i\in\cbr{1,2}
+            }
+            \EE\sbr{
+                \rewardss{
+                    \stopstateforpolicy{\pi_i}
+                }
+                | \statefiltss{\exchanget}
+            }
+            & 
+            \text{if } \lastfollowtimeii{1} = \lastfollowtimeii{2} = \timeind
+            \\
+            1
+            & 
+            \text{if } \lastfollowtimeii{1} = \lastfollowtimeii{2} <\timeind
+        \end{cases}  
+    \end{align*}  
+    be which policy is selected and define $\exchangepolicy_3$ via
+    the strategy
+    \begin{align*}
+        \strategytt{k+1}^3
+        &=
+        1_{
+            \cbr{
+                k<\lastcommonfollowtime
+            }
+        }
+        \exchangett{k+1}
+        +
+        1_{
+            \cbr{
+                k\geq\lastcommonfollowtime
+            }
+        }
+        \strategytt{k+1}^\chosenpath
+        \\
+        &=
+        1_{
+            \cbr{
+                \chosenpath=1
+            }
+        }
+        \strategytt{k+1}^1
+        +
+        1_{
+            \cbr{
+                \chosenpath=2
+            }
+        }
+        \strategytt{k+1}^2
+    \end{align*}  
+    and the stopping time 
+    \(
+        \stoptime^3
+        =
+        1_{
+            \cbr{
+                \chosenpath=1
+            }
+        }
+        \stoptime^1
+        +
+        1_{
+            \cbr{
+                \chosenpath=2
+            }
+        }
+        \stoptime^2
+    \). 
+    Intuitively, $\exchangepolicy_3$ follows $\fixedpath$ up until
+    $\lastcommonfollowtime$, at which point we can determine which of 
+    $\exchangepolicy_1$ or $\exchangepolicy_2$ to follow.
+    From the construction above, we have that 
+    \(
+        \cbr{
+            \chosenpath=1
+        }
+        =
+        \cbr{
+            \exchangepolicy_3
+            =
+            \exchangepolicy_1
+        }
+    \)
+    and 
+    \(
+        \cbr{
+            \chosenpath=2
+        }
+        =
+        \cbr{
+            \exchangepolicy_3
+            =
+            \exchangepolicy_2
+        }
+    \).
+
+    For brevity let 
+    \(
+        A=
+        \policyfollowspath{\fixedpath}{\exchangepolicy_1}
+    \)
+    and 
+    \(
+        B=
+        \policyfollowspath{\fixedpath}{\exchangepolicy_2}
+    \).
+    Since $\exchangepolicy_3$ fails to follow $\fixedpath$ exactly when
+    both $\exchangepolicy_1$ and $\exchangepolicy_2$ fail to follow 
+    $\fixedpath$, we can write~\eqref{eq:closed-under-maxima} as 
+    \begin{align*}
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy_3}
+        }
+        \EE\sbr{
+            \rewardss{
+                \stopstateforpolicy{
+                    \exchangepolicy_3
+                }
+            }
+            | \statefiltss{\exchanget}
+        }
+        -
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy_3}^c
+        }
+        \rewardbound
+        =
+        \rbr{
+            1_{
+                A\cap B
+            }
+            +
+            1_{
+                A\cap B^c
+            }
+            +
+            1_{
+                A^c\cap B
+            }
+        }
+        \EE\sbr{
+            \rewardss{
+                \stopstateforpolicy{
+                    \exchangepolicy_3
+                }
+            }
+            | \statefiltss{\exchanget}
+        }
+        -
+        1_{
+            A^c\cap B^c
+        }
+        \rewardbound .
+    \end{align*}   
+    By construction of $\exchangepolicy_3$, the right hand side becomes
+    \begin{gather*}
+        1_{
+            A\cap B
+        }
+        \rbr{
+            \EE\sbr{
+                \rewardss{
+                    \stopstateforpolicy{
+                        \exchangepolicy_1
+                    }
+                }
+                | \statefiltss{\exchanget}
+            }
+            \vee
+            \EE\sbr{
+                \rewardss{
+                    \stopstateforpolicy{
+                        \exchangepolicy_2
+                    }
+                }
+                | \statefiltss{\exchanget}
+            }
+        }
+        +
+        1_{
+            A\cap B^c
+        }
+        \EE\sbr{
+            \rewardss{
+                \stopstateforpolicy{
+                    \exchangepolicy_1
+                }
+            }
+            | \statefiltss{\exchanget}
+        }
+        +
+        1_{
+            A^c\cap B
+        }
+        \EE\sbr{
+            \rewardss{
+                \stopstateforpolicy{
+                    \exchangepolicy_2
+                }
+            }
+            | \statefiltss{\exchanget}
+        }
+        -
+        1_{
+            A^c\cap B^c
+        }
+        \rewardbound
+        \\
+        \rbr{
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy_1}
+            }
+            \EE\sbr{
+                \rewardss{
+                    \stopstateforpolicy{
+                        \exchangepolicy_1
+                    }
+                }
+                | \statefiltss{\exchanget}
+            }
+            -
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy_1}^c
+            }
+            \rewardbound
+        }
+        \vee
+        \rbr{
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy_2}
+            }
+            \EE\sbr{
+                \rewardss{
+                    \stopstateforpolicy{
+                        \exchangepolicy_2
+                    }
+                }
+                | \statefiltss{\exchanget}
+            }
+            -
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy_2}^c
+            }
+            \rewardbound
+        } 
+    \end{gather*}  
+    as desired. Finally, by Assumption~\ref{assum:ic-pasting}
+    we have $\exchangepolicy\in\seticexchangepolicies$ which concludes the 
+    proof.
+\end{proof}  
+
+The point of Lemma~\ref{lem:directed-upwards} is to show that under Assumption~\ref{assum:ic-pasting}, 
+two policies can be pasted together to form a new policy which either follows the path for longer
+or has a higher expected reward.
+We now use this to prove the following theorem which our constructed policy will be based on.
+
+\begin{restatable}{theorem}{icDpEq}
+    \label{thm:ic-dp-eq}
+    Suppose that Assumption~\ref{assum:ic-pasting} holds
+    and $\seticexchangepolicies$ is countable. Let 
+    \(
+        \existspolicymatchingpath{\fixedpath}
+        =
+        \cbr{
+            \exists \exchangepolicy\in\seticexchangepolicies :
+            \strategyindexrange{0}{\stoptime}=\fixedpath
+        }
+    \)
+    be the event that there is an IC exchange policy which follows $\fixedpath$ and then stops. Then,
+    \[
+        \icsnellenvp
+        =
+        \max\cbr{
+            \rbr{
+                1_{
+                    \existspolicymatchingpath{\fixedpath}
+                }
+                \rewardss{\exchanget}
+                -
+                1_{
+                    \existspolicymatchingpath{\fixedpath}^c
+                }
+                \rewardbound
+            },
+            \EE\sbr{
+                \icsnellenvpp{
+                    \rbr{
+                        \fixedpath, \nextexchange
+                    }
+                }
+                |
+                \statefiltss{\exchanget}
+            }
+            \nextexchange
+            > \exchanget 
+            % \in
+            % \validicextensionspp{\fixedpath}
+        }
+    \]
+    where 
+    \(
+        \rbr{
+            \fixedpath, \nextexchange
+        }
+    \)
+    represents the path $\fixedpath$ extended to $\nextexchange$.
+    % , and 
+    % \(
+    %     \validicextensionspp{\fixedpath}
+    %     =
+    %     \cbr{
+    %         \nextexchange\in\setexchanges :
+    %         \nextexchange > \exchanget,
+    %         \exists 
+    %     }
+    % \)
+    % is the set of
+\end{restatable}  
+
+% We now give a sketch of this proof with the full details available in Appendix~\ref{app:omitted-proofs}.
+% At a high level, this result says that the 
+\begin{proof}
+    % [Proof sketch]
+    Fix
+    \(
+        \fixedpath
+        =
+        \rbr{
+            \exchangett{0},
+            \ldots,
+            \exchanget
+        }
+    \).
+    % We will follow the same high level strategy that~\citep{mandelbaum1981optimal}
+    % uses to prove Theorem~\ref{thm:osas-dp-eq}, showing the left hand side is both greater than or equal and less than
+    % or equal to the right hand side.
+    % KK: I took this off since it seemed to minimize your contributons. If you want to put it back in, then highlight how your proof differs from theirs. Ideally you would do this if you had time.
+    We start by proving
+    \begin{align*}
+        \icsnellenvp
+        \geq
+        \max\cbr{
+            \rbr{
+                1_{
+                    \existspolicymatchingpath{\fixedpath}
+                }
+                \rewardss{\exchanget}
+                -
+                1_{
+                    \existspolicymatchingpath{\fixedpath}^c
+                }
+                \rewardbound
+            },
+            \EE\sbr{
+                \icsnellenvpp{
+                    \rbr{
+                        \fixedpath, \nextexchange
+                    }
+                }
+                |
+                \statefiltss{\exchanget}
+            }
+            \nextexchange
+            > \exchanget 
+        } .
+    \end{align*}  
+    Let 
+    \(
+        \exchanget<\nextexchange\in\setexchanges
+    \)
+    and consider the path $\fixedpath$ extended to $\nextexchange$, 
+    \(
+        \rbr{
+            \fixedpath,\nextexchange
+        }
+    \).
+    By Lemma~\ref{lem:directed-upwards} the family of random variables
+    \begin{align*}
+        \cbr{
+            1_{
+                \policyfollowspath{
+                    \fixedpath,\nextexchange
+                }{\exchangepolicy}
+            }
+            \EE\sbr{
+                \rewardss{
+                    \strategytt{\stoptime}
+                }
+                |
+                \statefiltss{\nextexchange}
+            }
+            -
+            1_{
+                \policyfollowspath{
+                    \fixedpath,\nextexchange
+                }{\exchangepolicy}^c
+            }
+            \rewardbound 
+            :
+            \exchangepolicy\in\seticexchangepolicies
+        }
+    \end{align*}  
+    is directed upwards.
+    Therefore, there exists a sequence of exchange policies 
+    \(
+        \exchangepolicy_k 
+        \in\seticexchangepolicies
+    \)
+    such that 
+    \begin{align*}
+        \snellenvss{
+            \rbr{
+                \fixedpath,\nextexchange
+            }
+        }
+        =
+        \lim_{k\rightarrow\infty}
+        \rbr{
+            1_{
+                \policyfollowspath{
+                    \fixedpath,\nextexchange
+                }{\exchangepolicy_k}
+            }
+            \EE\sbr{
+                \rewardss{
+                    \strategytt{\stoptime}
+                }
+                |
+                \statefiltss{\nextexchange}
+            }
+            -
+            1_{
+                \policyfollowspath{
+                    \fixedpath,\nextexchange
+                }{\exchangepolicy_k}^c
+            }
+            \rewardbound 
+        } .
+    \end{align*}  
+    Since $\rewards$ is bounded, we can apply the dominated convergence theorem for conditional expectations, which
+    together with the tower property, yields
+    \begin{align*}
+        \EE\sbr{
+            \snellenvss{
+                \rbr{
+                    \fixedpath,\nextexchange
+                }
+            }
+            | 
+            \statefiltss{\exchanget}
+        }
+        &=
+        \EE\sbr{
+            \lim_{k\rightarrow\infty}
+            \rbr{
+                1_{
+                    \policyfollowspath{
+                        \fixedpath,\nextexchange
+                    }{\exchangepolicy_k}
+                }
+                \EE\sbr{
+                    \rewardss{
+                        \stopstateforpolicy{
+                            \exchangepolicy_k
+                        }
+                    }
+                    |
+                    \statefiltss{\nextexchange}
+                }
+                -
+                1_{
+                    \policyfollowspath{
+                        \fixedpath,\nextexchange
+                    }{\exchangepolicy_k}^c
+                }
+                \rewardbound 
+            }
+            ~|~ 
+            \statefiltss{\exchanget}
+        }
+        \\
+        &=
+        \lim_{k\rightarrow\infty}
+        \rbr{
+            1_{
+                \policyfollowspath{
+                    \fixedpath,\nextexchange
+                }{\exchangepolicy_k}
+            }
+            \EE\sbr{
+                \rewardss{
+                    \stopstateforpolicy{
+                        \exchangepolicy_k
+                    }
+                }
+                | 
+                \statefiltss{\exchanget}
+            }
+            -
+            1_{
+                \policyfollowspath{
+                    \fixedpath,\nextexchange
+                }{\exchangepolicy_k}^c
+            }
+            \rewardbound 
+        } .
+    \end{align*}  
+    Now notice that 
+    \(
+        \policyfollowspath{
+            \fixedpath,\nextexchange
+        }{\exchangepolicy}
+        \subseteq
+        \policyfollowspath{
+            \fixedpath
+        }{\exchangepolicy}
+    \)
+    implies
+    \(
+        \policyfollowspath{
+            \fixedpath,\nextexchange
+        }{\exchangepolicy}^c
+        \supseteq
+        \policyfollowspath{
+            \fixedpath
+        }{\exchangepolicy}^c
+    \).
+    This, together with the definiton of $\icsnellenvp$, gives
+    \begin{align*}
+        \lim_{k\rightarrow\infty}
+        \rbr{
+            1_{
+                \policyfollowspath{
+                    \fixedpath,\nextexchange
+                }{\exchangepolicy_k}
+            }
+            \EE\sbr{
+                \rewardss{
+                    \stopstateforpolicy{
+                        \exchangepolicy_k
+                    }
+                }
+                | 
+                \statefiltss{\exchanget}
+            }
+            -
+            1_{
+                \policyfollowspath{
+                    \fixedpath,\nextexchange
+                }{\exchangepolicy_k}^c
+            }
+            \rewardbound 
+        }
+        % \\
+        &\leq
+        % \leq
+        \lim_{k\rightarrow\infty}
+        \rbr{
+            1_{
+                \policyfollowspath{
+                    \fixedpath
+                }{\exchangepolicy_k}
+            }
+            \EE\sbr{
+                \rewardss{
+                    \stopstateforpolicy{
+                        \exchangepolicy_k
+                    }
+                }
+                | 
+                \statefiltss{\exchanget}
+            }
+            -
+            1_{
+                \policyfollowspath{
+                    \fixedpath
+                }{\exchangepolicy_k}^c
+            }
+            \rewardbound 
+        }
+        \\
+        &\leq
+        % \leq
+        \lim_{k\rightarrow\infty}
+        \icsnellenvp
+        =
+        \icsnellenvp .
+    \end{align*}  
+    Thus, we have show for any $\nextexchange>\exchanget$,
+    \(
+        \icsnellenvp
+        \geq
+        \EE\sbr{
+            \snellenvss{
+                \rbr{
+                    \fixedpath,\nextexchange
+                }
+            }
+            | 
+            \statefiltss{\exchanget}
+        }
+    \).
+    To show 
+    \(
+        \icsnellenvp
+        \geq
+        1_{
+            \existspolicymatchingpath{\fixedpath}
+        }
+        \rewardss{
+            \exchanget
+        }
+        -
+        1_{
+            \existspolicymatchingpath{\fixedpath}^c
+        }
+        \rewardbound
+    \), 
+    it sufficies to prove
+    \(
+        1_{
+            \existspolicymatchingpath{\fixedpath}
+        }
+        \icsnellenvp
+        \geq
+        1_{
+            \existspolicymatchingpath{\fixedpath}
+        }
+        \rewardss{
+            \exchanget
+        }
+    \) 
+    since 
+    $-\rewardbound$ lower bounds $\icsnellenvp$.
+    By the definition, on the event
+    $\existspolicymatchingpath{\fixedpath}$ there is a policy in $\seticexchangepolicies$ matching $\fixedpath$.
+    Since $\seticexchangepolicies$, the essential supremum can be replaced with a supremum. Therefore,
+    \begin{align*}
+        1_{
+            \existspolicymatchingpath{\fixedpath}
+        }
+        \icsnellenvp
+        &=
+        1_{
+            \existspolicymatchingpath{\fixedpath}
+        }
+        \esssup_{
+            \exchangepolicy\in\seticexchangepolicies
+        }
+        \EE\sbr{
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy}
+            }
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+            -
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy}^c
+            }
+            \rewardbound
+            ~
+            |
+            ~
+            \statefiltss{\exchanget}
+        }
+        \\
+        &=
+        1_{
+            \existspolicymatchingpath{\fixedpath}
+        }
+        \sup_{
+            \exchangepolicy\in\seticexchangepolicies
+        }
+        \EE\sbr{
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy}
+            }
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+            -
+            1_{
+                \policyfollowspath{\fixedpath}{\exchangepolicy}^c
+            }
+            \rewardbound
+            ~
+            |
+            ~
+            \statefiltss{\exchanget}
+        }
+        \\
+        &\geq
+        1_{
+            \existspolicymatchingpath{\fixedpath}
+        }
+        \rewardss{
+            \strategyt
+        } .
+    \end{align*} 
+    % \mycomment{maybe go into a bit more detail on this, its correct but maybe not extremely clear}
+    Putting everything together we conclude
+    \begin{align*}
+        \icsnellenvp
+        \geq
+        \max\cbr{
+            \rbr{
+                1_{
+                    \existspolicymatchingpath{\fixedpath}
+                }
+                \rewardss{\exchanget}
+                -
+                1_{
+                    \existspolicymatchingpath{\fixedpath}^c
+                }
+                \rewardbound
+            },
+            \EE\sbr{
+                \icsnellenvpp{
+                    \rbr{
+                        \fixedpath, \nextexchange
+                    }
+                }
+                |
+                \statefiltss{\exchanget}
+            }
+            \nextexchange
+            > \exchanget 
+        } .
+    \end{align*}  
+    For the other inequality we will show that for any $\exchangepolicy\in\seticexchangepolicies$,
+    \begin{align}
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy}
+        }
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+            | \statefiltss{\strategyt}
+        }
+        -
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy}^c
+        }
+        \rewardbound
+        \leq 
+        \max\cbr{
+            \rbr{
+                1_{
+                    \existspolicymatchingpath{\fixedpath}
+                }
+                \rewardss{\exchanget}
+                -
+                1_{
+                    \existspolicymatchingpath{\fixedpath}^c
+                }
+                \rewardbound
+            },
+            \EE\sbr{
+                \icsnellenvpp{
+                    \rbr{
+                        \fixedpath, \nextexchange
+                    }
+                }
+                |
+                \statefiltss{\exchanget}
+            }
+            \nextexchange
+            > \exchanget 
+        }
+        \label{eq:ic-dp-proof}
+    \end{align}  
+    from which, by taking the essential supremum over both sides, it will follow that 
+    \begin{align*}
+        \icsnellenvp
+        \leq
+        \max\cbr{
+            \rbr{
+                1_{
+                    \existspolicymatchingpath{\fixedpath}
+                }
+                \rewardss{\exchanget}
+                -
+                1_{
+                    \existspolicymatchingpath{\fixedpath}^c
+                }
+                \rewardbound
+            },
+            \EE\sbr{
+                \icsnellenvpp{
+                    \rbr{
+                        \fixedpath, \nextexchange
+                    }
+                }
+                |
+                \statefiltss{\exchanget}
+            }
+            \nextexchange
+            > \exchanget 
+        } .
+    \end{align*}  
+    To prove~\eqref{eq:ic-dp-proof}, it suffices to show that
+    \begin{align*}
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy}
+        }
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+            | \statefiltss{\exchanget}
+        }
+        \leq 
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy}
+        }
+        \max\cbr{
+            \rbr{
+                1_{
+                    \existspolicymatchingpath{\fixedpath}
+                }
+                \rewardss{\exchanget}
+                -
+                1_{
+                    \existspolicymatchingpath{\fixedpath}^c
+                }
+                \rewardbound
+            },
+            \EE\sbr{
+                \icsnellenvpp{
+                    \rbr{
+                        \fixedpath, \nextexchange
+                    }
+                }
+                |
+                \statefiltss{\exchanget}
+            }
+            \nextexchange
+            > \exchanget 
+        }
+    \end{align*}  
+    since $-\rewardbound$ is a lower bound for $\rewards$. Notice that on the event
+    $\policyfollowspath{\fixedpath}{\exchangepolicy}$, $\exchangepolicy$ either stops at time 
+    $\timeind$ or continues, moving to a state $\nextexchange>\exchanget$. Thus
+    \begin{align*}
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy}
+        }
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+            | \statefiltss{\exchanget}
+        }
+        =
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy}
+        }
+        \rbr{
+            1_{
+                \cbr{\stoptime=\timeind}
+            }
+            \rewardss{\exchanget}
+            +
+            \sum_{
+                \nextexchange>\exchanget
+            }
+            1_{
+                \cbr{
+                    \substack{
+                        \strategytt{\timeind+1}=\nextexchange,
+                        \\
+                        \stoptime\geq\timeind+1
+                    }
+                }
+            }
+            \EE\sbr{
+                \rewardss{
+                    \strategytt{\stoptime}
+                }
+                | \statefiltss{\exchanget}
+            }
+        } .
+    \end{align*}  
+    Because 
+    \(
+        \policyfollowspath{\fixedpath}{\exchangepolicy}
+        \cap
+        \cbr{
+            \stoptime=\timeind
+        }
+        \subseteq
+        \existspolicymatchingpath{\fixedpath}
+    \),
+    we have
+    \(
+        \policyfollowspath{\fixedpath}{\exchangepolicy}
+        \cap
+        \cbr{
+            \stoptime=\timeind
+        }
+        \cap
+        \existspolicymatchingpath{\fixedpath}^c
+        =
+        \varnothing
+    \). Therefore,
+    the first term can be rewritten as 
+    \begin{align*}
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy}
+        }
+        1_{
+            \cbr{\stoptime=\timeind}
+        }
+        \rewardss{\exchanget}
+        =
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy}
+        }
+        1_{
+            \cbr{\stoptime=\timeind}
+        }
+        \rbr{
+            1_{
+                \existspolicymatchingpath{\fixedpath}
+            }
+            \rewardss{\exchanget}
+            -
+            1_{
+                \existspolicymatchingpath{\fixedpath}^c
+            }
+            \rewardbound
+        } .
+    \end{align*}  
+    For the second term,
+    \(
+        \policyfollowspath{\fixedpath}{\exchangepolicy}
+        \cap
+        \cbr{
+            \substack{
+                \strategytt{\timeind+1}=\nextexchange,
+                \\
+                \stoptime\geq\timeind+1
+            }
+        }
+        =
+        \policyfollowspath{\fixedpath,\nextexchange}{\exchangepolicy}
+    \)
+    and so
+    \begin{align*}
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy}
+        }
+        \sum_{
+            \nextexchange>\exchanget
+        }
+        1_{
+            \cbr{
+                \substack{
+                    \strategytt{\timeind+1}=\nextexchange,
+                    \\
+                    \stoptime\geq\timeind+1
+                }
+            }
+        }
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+            | \statefiltss{\exchanget}
+        }
+        &=
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy}
+        }
+        \sum_{
+            \nextexchange>\exchanget
+        }
+        1_{
+            \cbr{
+                \substack{
+                    \strategytt{\timeind+1}=\nextexchange,
+                    \\
+                    \stoptime\geq\timeind+1
+                }
+            }
+        }
+        \EE\sbr{
+            \EE\sbr{
+                \rewardss{
+                    \strategytt{\stoptime}
+                }
+                | \statefiltss{\nextexchange}
+            }
+            | \statefiltss{\exchanget}
+        }
+        \\
+        &=
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy}
+        }
+        \sum_{
+            \nextexchange>\exchanget
+        }
+        1_{
+            \cbr{
+                \substack{
+                    \strategytt{\timeind+1}=\nextexchange,
+                    \\
+                    \stoptime\geq\timeind+1
+                }
+            }
+        }
+        \EE\sbr{
+            1_{
+                \policyfollowspath{\fixedpath,\nextexchange}{\exchangepolicy}
+            }
+            \EE\sbr{
+                \rewardss{
+                    \strategytt{\stoptime}
+                }
+                | \statefiltss{\nextexchange}
+            }
+            -
+            1_{
+                \policyfollowspath{\fixedpath,\nextexchange}{\exchangepolicy}^c
+            }
+            \rewardbound
+            ~|~ \statefiltss{\exchanget}
+        }
+        \\
+        &\leq
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy}
+        }
+        \sum_{
+            \nextexchange>\exchanget
+        }
+        1_{
+            \cbr{
+                \substack{
+                    \strategytt{\timeind+1}=\nextexchange,
+                    \\
+                    \stoptime\geq\timeind+1
+                }
+            }
+        }
+        \EE\sbr{
+            \icsnellenvpp{
+                \fixedpath,\nextexchange
+            }
+            | \statefiltss{\exchanget}
+        } .
+    \end{align*}  
+    Putting together both pieces gives
+    \begin{align*}
+        &\hspace{0.4cm}
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy}
+        }
+        \rbr{
+            1_{
+                \cbr{\stoptime=\timeind}
+            }
+            \rewardss{\exchanget}
+            +
+            \sum_{
+                \nextexchange>\exchanget
+            }
+            1_{
+                \cbr{
+                    \substack{
+                        \strategytt{\timeind+1}=\nextexchange,
+                        \\
+                        \stoptime\geq\timeind+1
+                    }
+                }
+            }
+            \EE\sbr{
+                \rewardss{
+                    \strategytt{\stoptime}
+                }
+                | \statefiltss{\exchanget}
+            }
+        }
+        \\
+        &=
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy}
+        }
+        \rbr{
+            1_{
+                \cbr{\stoptime=\timeind}
+            }
+            \rbr{
+                1_{
+                    \existspolicymatchingpath{\fixedpath}
+                }
+                \rewardss{\exchanget}
+                -
+                1_{
+                    \existspolicymatchingpath{\fixedpath}^c
+                }
+                \rewardbound
+            }        
+            +
+            \sum_{
+                \nextexchange>\exchanget
+            }
+            1_{
+                \cbr{
+                    \substack{
+                        \strategytt{\timeind+1}=\nextexchange,
+                        \\
+                        \stoptime\geq\timeind+1
+                    }
+                }
+            }
+            \EE\sbr{
+                \rewardss{
+                    \strategytt{\stoptime}
+                }
+                | \statefiltss{\exchanget}
+            }
+        }
+        \\
+        &\leq
+        1_{
+            \policyfollowspath{\fixedpath}{\exchangepolicy}
+        }
+        \max\cbr{
+            \rbr{
+                1_{
+                    \existspolicymatchingpath{\fixedpath}
+                }
+                \rewardss{\exchanget}
+                -
+                1_{
+                    \existspolicymatchingpath{\fixedpath}^c
+                }
+                \rewardbound
+            },
+            \EE\sbr{
+                \icsnellenvpp{
+                    \rbr{
+                        \fixedpath, \nextexchange
+                    }
+                }
+                |
+                \statefiltss{\exchanget}
+            }
+            \nextexchange
+            > \exchanget 
+        }
+    \end{align*}  
+    which concludes the proof.
+\end{proof}  
+
+We are now ready to state the main IC result which is derived from Theorem~\ref{thm:ic-dp-eq}.
+% \kkcomment{You probably need to explain what it means for the set of IC policies to be countable. Give some examples where this might be true.}
+
+\begin{restatable}{theorem}{policyMatchingIcOptReward}
+    \label{thm:policy-matching-ic-opt-reward}
+    Suppose that Assumption~\ref{assum:ic-pasting} holds and $\seticexchangepolicies$ is countable.
+    Let 
+    \(
+        \expolicymatchicopt
+        =
+        \rbr{
+            \cbr{
+                \strategyt
+            }_{\timeind\geq 0},
+            \stoptime
+        }
+    \)
+    be the exchange policy given by
+    \begin{align*}
+        \strategytt{0}=(0,0),
+        \quad
+        \strategytt{\timeind+1}
+        =
+        \argmax_{
+            \nextexchange>\exchange
+        }
+        \EE\sbr{
+            \icsnellenvpp{
+                \rbr{
+                    \strategyindexrange{0}{\timeind},\nextexchange
+                }
+            }
+            | \timefiltt
+        }
+    \end{align*}  
+    and
+    \(
+        \stoptime
+        =
+        \inf\cbr{
+            \timeind\in\NN_{\geq 0} :
+            \icsnellenvpp{
+                \strategyindexrange{0}{\timeind}
+            }
+            =
+            \rbr{
+                1_{
+                    \existspolicymatchingpath{\fixedpath}
+                }
+                \rewardss{\exchanget}
+                -
+                1_{
+                    \existspolicymatchingpath{\fixedpath}^c
+                }
+                \rewardbound
+            }
+        }
+    \).
+    % then ...
+    If 
+    $\expolicymatchicopt\in\seticexchangepolicies$,
+    then $\expolicymatchicopt$ is IC optimal. 
+    % Then,
+    % \(
+    %     \EE\sbr{
+    %         \rewardss{
+    %             \strategytt{
+    %                 \stoptime
+    %             }
+    %         }
+    %     }
+    %     =
+    %     \sup_{
+    %         \altexchangepolicy\in\seticexchangepolicies
+    %     }
+    %     \EE\sbr{
+    %         \rewardss{
+    %             \altstrategytt{
+    %                 \altstoptime
+    %             }
+    %         }
+    %     }
+    % \).
+\end{restatable}  
+\begin{proof}
+    By the definition $\expolicymatchicopt$
+    and Theorem~\ref{thm:ic-dp-eq},
+    we have that on $\cbr{\timeind <\stoptime}$,
+    \(
+        \icsnellenvpp{
+            \strategyindexrange{0}{\timeind}
+        }
+        =
+        \EE\sbr{
+            \icsnellenvpp{
+                \strategyindexrange{0}{\timeind+1}
+            }
+            | \timefiltt
+        }
+    \). 
+    This tells us that the sequence
+    \(
+        M_\timeind
+        =
+        \icsnellenvpp{
+            \strategyindexrange{0}{\timeind\wedge\stoptime}
+        }
+    \)
+    is a martingale. Therefore,
+    \(
+        \EE\sbr{
+            \icsnellenvpp{
+                \strategytt{0}
+            }
+        }
+        =
+        \EE\sbr{M_0}
+        =
+        \EE\sbr{M_\timeind}
+    \).
+    From Theorem~\ref{thm:ic-dp-eq}, the fact that $\strategyt$ is increasing, and $\setexchanges$ is finite
+    we know that $\stoptime$ is finite. Thus applying the Dominated Convergence Theorem gives 
+    \[
+        \EE\sbr{
+            \icsnellenvpp{
+                \strategytt{0}
+            }
+        }
+        =
+        \lim_{\timeind\rightarrow\infty}
+        \EE\sbr{
+            M_\timeind
+        }
+        =
+        \EE\sbr{
+            \lim_{\timeind\rightarrow\infty}
+            M_\timeind
+        }
+        =
+        \EE\sbr{
+            \icsnellenvpp{
+                \strategyindexrange{0}{\stoptime}
+            }
+        }
+    \]
+    % \mycomment{check}
+    % \mycomment{bit odd state notation below}
+    Since $\expolicymatchicopt\in\seticexchangepolicies$,
+    by Theorem~\ref{thm:equiv-alg-defs} and the definition of $\stoptime$,
+    \(
+        \icsnellenvpp{
+            \strategyindexrange{0}{\stoptime}
+        }
+        =
+        1_{
+            \existspolicymatchingpath{
+                \strategyindexrange{0}{\stoptime}
+            }
+        }
+        \rewardss{\stoptime}
+        -
+        1_{
+            \existspolicymatchingpath{
+                \strategyindexrange{0}{\stoptime}
+            }^c
+        }
+        \rewardbound
+        =
+        \rewardss{\stoptime}
+    \).
+    Therefore, by the definitions of $\icsnellenvp$ and $\seticexchangepolicies$,
+    \begin{align*}
+        \EE\sbr{
+            \icsnellenvpp{\strategytt{0}}
+        }
+        &=
+        \EE\sbr{
+            \esssup_{
+                \exchangepolicy\in\seticexchangepolicies
+            }
+            \EE\sbr{
+                1_{
+                    \policyfollowspath{\strategytt{0}}{\exchangepolicy}
+                }
+                \rewardss{
+                    \strategytt{\stoptime}
+                }
+                -
+                1_{
+                    \policyfollowspath{\strategytt{0}}{\exchangepolicy}^c
+                }
+                \rewardbound
+                ~
+                |
+                ~
+                \statefiltss{\exchangett{0}}
+            }
+        }
+        \\
+        &=
+        \EE\sbr{
+            \esssup_{
+                \exchangepolicy\in\seticexchangepolicies
+            }
+            \EE\sbr{
+                \rewardss{
+                    \strategytt{\stoptime}
+                }
+            }
+        }
+        \\
+        &=
+        \EE\sbr{
+            \sup_{
+                \exchangepolicy\in\seticexchangepolicies
+            }
+            \EE\sbr{
+                \rewardss{
+                    \strategytt{\stoptime}
+                }
+            }
+        }
+        \\
+        &=
+        \sup_{
+            \exchangepolicy\in\seticexchangepolicies
+        }
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+        } .
+    \end{align*}  
+    Therefore,
+    \(
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+        }
+        =
+        \EE\sbr{
+            \icsnellenvpp{
+                \strategyindexrange{0}{\stoptime}
+            }
+        }
+        =
+        \EE\sbr{
+            \icsnellenvpp{
+                \strategytt{0}
+            }
+        }
+        =
+        \sup_{
+            \exchangepolicy\in\seticexchangepolicies
+        }
+        \EE\sbr{
+            \rewardss{
+                \strategytt{\stoptime}
+            }
+        }
+    \), so $\expolicymatchicopt$ is IC optimal.
+\end{proof}  
+
+For technical reasons, Theorem~\ref{thm:policy-matching-ic-opt-reward} requires that 
+$\seticexchangepolicies$ is countable.
+However, we wish to emphasize that there a number of models in which this is the case.
+For example, when the valuations $\cbr{\valai}_{\numdatafora=0}^\numdataa$,  
+$\cbr{\valbj}_{\numdataforb=0}^\numdatab$ have finite support, there are finitely many policies
+and thus finitely many IC policies.
+
+% \mycomment{what about external randomness?}
+
+% \begin{restatable}{corollary}{ic-opt-alg}
+%     Suppose that Assumption~\ref{assum:ic-pasting} holds.
+%     Let $\expolicymatchicopt$ be the policy given in Theorem~\ref{thm:policy-matching-ic-opt-reward}.
+%     If $\expolicymatchicopt\in\seticexchangepolicies$ then $\expolicymatchicopt$ is IC optimal.
+% \end{restatable}  
+
+

@@ -1,0 +1,44 @@
+\begin{abstract}
+% Competing entities can often benefit mutually by sharing resources, such as datasets  or access to experimental equipment for research and 
+% development. However, uncertainty about an agent's valuation of another's resources can make participants reluctant to share 
+% even when mutual benefit is likely, due to fears of imbalanced realized benefits. For example, the value of access to a competitor's 
+% dataset or time on experimental equipment is typically revealed only through use and is difficult to assess \emph{ex ante}. In this 
+% work, we study the design of exchange algorithms for two competing agents whose valuations are uncertain and revealed incrementally 
+% through interaction. We focus on resources whose value depends on the amount shared (e.g. volume of data, hours of equipment use) 
+% and is inherently non-retractable (i.e. once data is transmitted or time on equipment is used, it cannot be reclaimed).
+
+% We introduce multi-round \emph{exchange algorithms} that propose sequences of increasing exchanges, leveraging information 
+% from prior rounds to improve expected welfare. Our first and contribution is an optimal multi-exchange algorithm under minimal 
+% assumptions on valuations, utilities, and welfare functions, obtained by reducing the design problem to an optimal stopping 
+% problem over a lattice. The resulting algorithm is also individually rational for reasonable choices of welfare functions.
+% %
+% We then study a significantly more difficult setting in which agents may exit early. Under this model,
+% we define \emph{incentive-compatible} exchange algorithms, to be
+% those in which no agent can benefit from leaving prematurely.
+% Under added assumptions on the environment, we construct an exchange algorithm which is optimal
+% among all incentive-compatible exchange algorithms.
+
+
+% ---- new
+
+Competing entities can often mutually benefit by sharing resources, such as datasets or access to experimental equipment. 
+However, agents are often uncertain about the value they will realize from the others' resources.
+For example, the value of access to a competitor's dataset or time on experimental equipment is typically revealed only 
+through use and is difficult to assess \emph{ex ante}. This uncertainty can make agents reluctant to share even when mutual 
+benefit is likely, due to fears of imbalance in realized benefits; an agent may be concerned that a competitor will 
+derive more value from her resources than she would from theirs.
+
+In this work, we study the design of exchange algorithms for two competing agents whose valuations for the other's 
+resources are uncertain and only revealed incrementally through interaction. We focus on resources whose value 
+depends on the amount shared (e.g. volume of data, hours of equipment use) and is inherently non-retractable 
+(i.e. once data is transmitted or time on equipment is used, it cannot be reclaimed). We introduce multi-round 
+\emph{exchange algorithms} that propose sequences of increasing exchanges, leveraging information from prior rounds 
+to improve expected welfare. Our first contribution is an optimal and individually rational multi-round exchange 
+algorithm, obtained by reducing this problem to an optimal stopping problem over the lattice $\NN^2_{\geq 0}$. 
+We then study the 
+setting in which agents may exit early, defining \emph{incentive-compatible} exchange algorithms to be those
+in which no agent can benefit from leaving prematurely.
+Under additional mild assumptions on the environment, we construct an exchange algorithm which is optimal
+among incentive-compatible exchange algorithms.
+
+\end{abstract}

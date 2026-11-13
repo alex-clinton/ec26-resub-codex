@@ -1,0 +1,8 @@
+aux/
+neurips-template/
+
+.DS_Store
+images/.DS_Store
+
+sections/backup-tables.tex
+typos-list.tex

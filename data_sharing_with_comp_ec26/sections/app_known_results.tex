@@ -1,0 +1,113 @@
+% \section{Borrowed and Known Results}
+\section{Borrowed Results}
+
+\begin{restatable}{theorem}{osasThm1}
+    \label{thm:osas-dp-eq}
+    \textup{
+        (\citet{mandelbaum1981optimal})
+    }
+    % Let 
+    % \(
+    %     \osasdirectsuccessorss{
+    %         \osasstate
+    %     }
+    %     =
+    %     \cbr{
+    %         u> \osasstate: \sbr{\osasstate,u}=\cbr{\osasstate,u}
+    %     } 
+    % \)
+    % be the set of direct successors for $\osasstate$, then
+    Snell's envelope for $\osassnellenvs$ exists and satisfies
+    \begin{gather*}
+        \osassnellenvs
+        =
+        \max
+        \cbr{
+            \osasrewards,
+            \EE\sbr{
+                \osassnellenvss{u}
+                | 
+                \osasstatefilts
+            }
+            : u\in
+            \osasdirectsuccessorss{
+                \osasstate
+            }
+        },
+        \\
+        % \quad
+        % \text{and} \quad
+        \EE\sbr{
+            \osassnellenvss{0}
+        }
+        =
+        \sup_{
+            \osaspolicy\in\osaspolicies
+        }
+        \EE\sbr{
+            \osasrewardss{
+                \osasstrategytt{
+                    \osasstoptime
+                }
+            }
+        }
+        .
+    \end{gather*}  
+\end{restatable}
+
+\begin{restatable}{theorem}{osasThm2}
+    \label{thm:osas-thm2}
+    If
+    \(
+        \osaspolicy
+        =
+        \rbr{
+            \cbr{
+                \osasstrategyt
+            }_{\timeind\geq 0},
+            \osasstoptime
+        }
+    \)
+    is a policy with the properties
+    \begin{align}
+        &
+        \osasstrategytt{\timeind+1} \text{ is a direct successor of } \osasstrategyt
+        \label{eq:osas-thm2-cond1}
+        \\
+        &
+        \osasstoptime
+        =
+        \inf\cbr{
+            t : 
+            \osassnellenvss{
+                \strategyt
+            }
+            =
+            \osasrewardss{
+                \strategyt
+            }
+        }
+        \label{eq:osas-thm2-cond2}
+        \\
+        &
+        \EE\sbr{
+            \osassnellenvss{
+                \osasstrategytt{
+                    \timeind+1
+                }
+            }
+            | \timefiltt
+        }
+        =
+        \osassnellenvss{
+            \osasstrategyt
+        }
+        \quad
+        \text{on}
+        \quad
+        \cbr{\osasstoptime<\timeind}
+        \label{eq:osas-thm2-cond3}
+    \end{align}  
+    and $\stoptime<\infty$ a.s., then $\pi$ is optimal. If there exists 
+    some optimal policy then there exists an one with the above properties which is optimal. 
+\end{restatable}  

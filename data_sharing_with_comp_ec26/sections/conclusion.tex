@@ -1,0 +1,326 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We studied the problem of incentivizing resource sharing between competing agents, without money, in settings where valuations are uncertain, 
+revealed only through interaction, and sharing is irreversible. We formalized a novel model for incremental resource sharing, 
+where a central planner proposes resource exchanges over multiple rounds. Our results show that carefully designed multi-round exchange 
+algorithms can substantially outperform static policies by learning agents' valuations over multiple rounds. 
+
+We characterized 
+such optimal policies via a reduction to an optimal stopping problem on the lattice $\NN^2_{\geq 0}$. 
+We then considered the problem of designing exchange algorithms when participants can leave early, and provided examples 
+demonstrating why it is fundamentally more challenging.
+These examples motivated necessary model conditions for which
+optimal stopping and martingale methods can be used to characterize an optimal exchange algorithm.
+% At the same time, we 
+% identified fundamental limitations 
+% when agents can strategically withdraw mid-policy, \kkcomment{expand}
+Two open questions arise from our work. 
+The first is whether or not an IC optimal algorithm is always guaranteed to exist, beyond the sufficient condition
+we provide.
+% While we have provided necessary conditions for optimal stopping and martingale methods
+% to yield an IC algorithm, 
+The second is how can our model and algorithms be extended to accommodate more than two competitors when there are complex interactions
+between participants' utility functions, and thus collaboration incentives.
+
+% Two open questions arising from our work is the  design of  \kkcomment{?} IC policies, \kkcomment{expand}, and the extension of our model 
+% and methods to multiple agents.
+
+% \section{IC outline}
+
+% \begin{enumerate}
+%     \item Section 4 outline
+%     \item 
+%     Say that the idea with optimal stopping is that once you reach a state, it doesn't matter how you got there, just where you are,
+%     aka its kind of markovian. In these settings you can proceed greedily by pasting policies together.
+%     However, this is not the case with IC policies because 
+    
+%     \item Give the 1/2 D example where IC pasting fails.
+
+%     \item Argue that intuitively this represents a misalignment between welare and utility optimization.
+
+%     \item In order to generalize the previous optimal stopping time algorithm approach to search for an IC policy, we need to make 
+%     an assumption that IC policies can be combined in a gredy way. 
+
+%     \item Assumption block
+
+%     \item Under this assumption we can give a dp equation analog. First introduce new ess sup, State the proposition, say (-C) is a lower bound.
+%     \item Proof sketch.
+
+%     \item Explain that under this assumption we can contruct a policy that matches the performance of an optimal IC
+    
+%     \item Explain idea of theory, if we are allowed to stop vs not allowed to. Give theorem
+
+%     \item Add remark that when this policy is IC, it is IC optimal.
+    
+%     \item Give proof citing proposition
+    
+%     \item \mycomment{NOte to self, revisit the stick note book marked, non trivially IC policy, see if it satisfies pasting 
+%     assumptions? make sure it matches our policy?}
+
+%     \item Add note that this really isn't practical to run. On going line of work to see if there are assumptions or special 
+%     classes of welfare functions for which pasting is satisfied and its easier to run the alg
+
+%     \item add corollary after main theorem saying if construction is IC then it is IC optimal
+% \end{enumerate}  
+
+% \begin{enumerate}
+%     \item \mycomment{In the intro and techniques section probably needs a brief summary of what 
+%     \citep{mandelbaum1981optimal} does so that the connection is not as abrupt}
+
+%     \item 
+%     say we're gonna start by reframing the problem. Say once an exchange of $(i,j)$ has occured, a know the value of the 
+%     first i points and b knows the value of the first j points. To represent the information available after an exchange,
+%     introduce sigma algebras for each of the states and define the family. And makke the observation that they are nested.
+%     say intuitively this represents that you know more after a superset of the data has been exchanged. Initially, we know nothing
+%     so $\Fcal_0=\cbr{\varnothing,\Omega}$
+
+%     \item
+%     % Say that given any algorithm, the corresponding sequence of states generated are a 
+%     Say that corresponding to any alg there is the sequence (replace the $s_t$s with sigmas)
+%     $\sigma_0,\ldots,\sigma_\tau$ which are a sequence of $\Scal$ 
+%     valued random variables. More over, it is the case that $\sigma_{t+1}$ is ... measurable. This reflect that the choice 
+%     the next exchange is only based on values observed from the previous exchange. 
+
+%     \item Short proposition showing correspondence between algorithms and policies? 
+%     \mycomment{feels unnecessary to make into prop but maybe reviewers would like to see more props?}
+
+%     \item 
+%     Give explanation saying that intuitively finding the optimal algorithm reduces to traversing 
+%     the grid moving up/right at each step and determining when to stop. Therefore, we can use the 
+%     language of (insert stopping paper) to formalize and analyze this problem.
+%     The snell env is a classic concept from optimal stopping times 
+%     We start with the snell env for partially ordered sets
+
+%     \item Define snell envelope $X_s$ for $s\in\Scal$ (citing paper). Explain what it means 
+%     intuitively, saying $\Pi_s$ is algorithms starting at state $s$.
+
+%     \item Say in optimal stopping time theory problems, because $X_s$ is difficult to compute direclty,
+%     you often prove a dynamic programming / recursive type of result. (cite paper) gives a formula
+%     for paritially ordered sets, specializing to 0...m x 0...n gives (insert result for our
+%     $N^2$ case). Then give proposition saying our optimal stopping algorithm?
+%     % \item 
+%     Have an algorithm block? Write it in algorithm form or policy form?
+%     maybe instead of alg block, just have a theorem saying the specific algorithm is optimal 
+
+%     \item 
+%     Add remarks about how practically you would use techniques like MC methods to evaluate things 
+
+%     \item Add note about how based on choice of welfare function you can make this indivisually
+%     rational
+%     \mycomment{add somewhere in assumptions that utility is 0 with no data exchanged.
+%     without this IR being defined to be >0 doesn't make sense?
+%     I think you only need to require $U^a_0=U^b_0=0$, don't worry about other states}
+% \end{enumerate}  
+
+
+% \subsection{An Optimal Algorithm when Participants cannot opt out}
+% \paragraph{Reducting to an optimal stopping problem over N2 to solve}
+
+
+
+% \begin{enumerate}
+    
+%     \item
+%     Say how a algorithm can be viewed as a sequence of stopping points with respect to the 
+%     sigma algebra generated by the values of data exchanged so far. Say that the stop decision
+%     can be viewed as a stopping time w.r.t. the $\Gcal_t$.
+
+%     \item
+%     Define rewards for stopping as the welfare of the utilities.
+
+%     \item
+%     Therefore, finding the optimal data sharing algorithm reduces to finding the optimal stopping time
+%     algorithm.
+
+%     \item
+%     Write out the algorithm to clairfy the interaction procedure
+
+%     \item
+%     Write a theorem saying that this is optimal. Proof involves using that rewards are bounded
+%     and the stopping time is a.s. finite thus we can apply theorems 1 and 2 from the paper. 
+
+%     \citet{mandelbaum1981optimal}
+
+% \end{enumerate}  
+
+% \paragraph{IR guarantees}
+
+% \begin{enumerate}
+%     \item Show that we automatically have ex ante IR for a sutible welfare function choice
+%     under the optimal algorithm
+
+%     \item 
+%     Say we can also give a high probability ex post IR guarantee assuming we use the optimal
+%     algorithm
+
+%     \item Write and prove a proposition about this 
+% \end{enumerate}  
+
+
+% \section{Optimal algorithm when agents can opt}
+
+% \begin{enumerate}
+%     \item The model above assumes that agents either commit to following the data
+%     sharing algorithm or do not, i.e. once they buy in they can't leave early.
+
+%     \item But what happens if we assume agents can leave early. You might choose this model
+%     for a real world setting if it is difficult to enforce agents to continue participating
+%     or avoid agents who don't want to continue from submitting bad data
+% \end{enumerate}  
+
+% \subsection{Model changes when agents can opt out}
+
+% \begin{enumerate}
+%     \item Before agents made a single decision, whether or not to participate.
+%     Now at each round they make a decision of whether or not to continue.
+%     If either agent or the mechanism stops the sharing its over.
+%     (Someone might ask what happens if both agents want to continue sharing but
+%     the mechanism says to stop? In this case you can update the welfare function
+%     so this won't happen?)
+
+%     \item Define agent strategies as sequence of decisions
+
+%     \item Remark that each agent's strategy corresponds to a stopping time
+    
+%     \item Use this to write out the expected welfare under a strategy profile in 
+%     terms of a policy and agent strategy stopping times
+
+%     \item Define a NE of policies under an algorithm
+
+%     \item Define the set of IC policies using the min trick
+
+%     \item State the problem of trying to find the optimal policy in this set,
+%     i.e. the optimal IC policy.
+
+% \end{enumerate}  
+
+% \subsection{An Optimal Algorithm when Participants can opt out}
+
+
+% \subsection{The opt IC algorithm}
+
+% \begin{enumerate}
+%     \item TBD
+% \end{enumerate}  
+
+
+
+% \section{Impossibility Results}
+
+% \begin{enumerate}
+%     \item 
+%     Thus far we've assumed that agents report their observed values at each round
+%     truthfully. The following result shows that if agents don't report truthfully
+%     no algorithm can obtain the optimal expected welfare.
+
+%     \item State proposition and give proof using two-flip.
+    
+% \end{enumerate}  
+
+
+% \section{Running questions}
+
+% \begin{enumerate}
+%     \item I feel like there is a blind spot that I have for prior work in 
+%     exchange of goods.
+
+%     \item Should we consider other definitions of utility? It would make computations more annoying
+%     but the results more general. (YES)
+
+%     \item In the valuation functions example do I need to make sure everything is bounded? Technically to apply our
+%     methods this is necessary but it would make the example cleaner if I didn't need to say $D_a,D_b$ are bounded and I
+%     could write $V^a_0=V^b_0=-\infty$.
+
+%     \item I don't even think independence of the value sequences are used anywhere?
+
+% \end{enumerate}  
+
+% \subsection{Small questions}
+
+% \begin{enumerate}
+%     \item Maybe give more examples of how value of data may not be known util it is used?
+
+%     \item maybe show the calculations more in ex 1?
+
+%     \item the general utility functions footnote?
+    
+%     \item should we specify probability space or require that the valuation functions are 
+%     markov chains?
+
+%     \item In the sharing alg def how much should we allude to the stopping time notation
+
+%     \item Intellectual / property rights as another example of goods?
+
+%     \item \mycomment{Do we need utilities to start at 0?}
+
+%     \item
+%     \mycomment{might definition to satisfy the property: to algs are = iff their dist over states is the same}
+
+%     \item technically the paper gives a vague def for snell env as supermartingale ... and shows its equiv to 
+%     what we say is the def
+
+%     \item Weird that exchange policies is $\Pi^{\text{ex}}$ but IC policies, which is a subset, is $\Pi^{\text{IC}}$
+
+%     \item fix stacking subscripts in pasting examples
+
+%     % \item Is it ok that I chopen part of thm 1 from their paper?
+
+
+% \end{enumerate}  
+
+% \section{TODO}
+
+% \begin{enumerate}
+%     \item \mycomment{add assumption somewhere that tie breaking always chooses smaller or lexigraphically
+%     smaller choice so that policies are consistent}
+%     \item Resolve why the two flip calculation doesnt match the optimal policy calculation
+%     \item cut down the descriptive text in section 2 
+%     \item In existing results prove conditional dominated convergence,
+%     proof is online
+%     \item
+%     \mycomment{add note about we must assume truthful reporting and its impossible to guarantee
+%     this type of algorithm does better than doing nothing.
+%     when agents are not truthful, welfare can be arbitrarily worse under the optimal algorithm } ?
+
+%     \item Probably worth mentioning the connection of IC policies to solving for NE
+%     \item the tildes and subscripts are hard to read, ex thm 3.5, fix this 
+%     \item make sure not to take credit from paper in thm 3.5
+%     \item I think the $\Ucal$ condition is probably redundant but harmless, maybe take this out later
+
+%     \item I added the $\alpha$ policy notation in the truthfulness proof, make sure this is introduced somewhere
+
+%     \item em dash creep
+
+%     \item What should we call the sequence of exit strategies?
+
+%     \item
+%     \mycomment{In 4.2 to make more pasting more comparable, maybe make the 1d stopping time version not random and have it be stopping times which stop no 
+%     earlier than fixed $t$}
+
+%      \item \mycomment{we say that when random variables have finite support there are finitely many policies?
+    %     is this only true assuming there is no external randomness to a policy?}
+% \end{enumerate}  
+
+% \section{To beef up submission}
+
+% \begin{enumerate}
+%     \item 
+%     Add an equivalence proof of two definitions of algorithms
+
+%     \item
+%     Add the unbounded difference example
+
+%     \item Work through the double flip example for the non-IC setting. write example followed 
+%     by a proof block.
+
+%     \item The IC alg might be more paletable if we can remove the $\Ucal$ part
+    
+%     \item 
+%     Work through 4 flips example for the IC setting?
+
+%     \item
+%     Does pasting hold for reasonable welfare functions like min?
+
+
+% \end{enumerate}  

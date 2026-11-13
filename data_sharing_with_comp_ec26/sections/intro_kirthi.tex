@@ -1,0 +1,400 @@
+
+\section{Introduction}
+\label{sec:intro}
+
+Competition is a defining feature of many multi-agent environments in which valuable resources are held by firms, research laboratories, and government institutions. Even in competitive settings, resource sharing can generate substantial mutual and social benefits. For instance, in data-driven scientific domains such as materials design, drug discovery, and chip design, pooling datasets across organizations increases statistical power, accelerates the identification of promising designs, and reduces redundant experimentation~\cite{DataReuseOpenDataAdvantage, Villanueva2021,resonac_joint3_2025}. Similarly, open collaboration on clinical research data has been shown to facilitate secondary analyses, improve public health insights, and inform new hypotheses beyond the scope of any single study~\cite{NCBI_SharingClinicalData, NatGeneticsDataSharing}. In academic and scientific contexts, shared access to specialized experimental facilities and high-performance computing infrastructure can enable studies that would be infeasible for a single group to carry out independently~\citep{ambulos2025greater,cuboulder_greenlabs_2024,orduna2014sharing}. More broadly, many competitive resource-sharing environments are nonzero-sum: when agents possess complementary assets, joint use can increase total surplus, allowing all participants to mutually benefit despite competition, with these benefits extending to society at large.
+
+\parahead{Uncertainty in valuations}
+However, a central challenge in incentivizing agents to share in such settings is uncertainty about how much an agent values another agent’s resources. For example, the economic value of access to a competitor’s dataset or time on specialized equipment is difficult to assess \emph{ex ante} and is typically revealed only through use.
+For instance, the utility of a dataset is determined by the performance of models trained using this dataset in downstream analyses; this information is generally unavailable without direct access to the dataset itself. Similarly, the value of access to a competitor’s laboratory equipment often hinges on whether the resulting experiments produce novel academic insights or commercially viable outcomes.
+
+Hence, a key challenge in resource sharing is the possibility of imbalance in realized values. Precisely, due to this uncertainty, an agent may be concerned that competitors will derive more value from her resources than she will from theirs. Standard market mechanisms and contractual approaches are ill-suited to such environments, as they generally cannot accommodate settings in which one's value for a competitor's resource is learned only through interaction.
+
+
+
+\parahead{This work}
+We study the design of exchange algorithms, \emph{without monetary transfers}, that incentivize resource sharing between \emph{two} 
+competing agents. We focus on resources whose valuation can be expressed as a function of the \emph{amount} shared 
+(e.g. volume of data or number of hours of access to laboratory equipment) and for which sharing is inherently \emph{non-retractable} 
+(i.e. once data have been transmitted or time on a machine has been used, the original agent cannot reclaim those units).
+The latter feature creates a fundamental tension: valuations are revealed only through sharing, yet any over-sharing 
+that makes an agent worse off cannot be reversed.
+%
+We focus on algorithms that enable \emph{incremental} collaboration (e.g. sharing small amounts of data, granting access 
+to specialized equipment for a limited time), which allows agents to learn each other's valuations over multiple rounds. 
+Our goal is to design exchange algorithms that achieve socially desirable outcomes by sustaining cooperation when it is mutually beneficial
+and terminating interaction when it is not.
+
+
+\subsection{Summary of Our Contributions}
+
+We formalize this problem via a novel model and study resource exchange in two settings: first, when agents cannot withdraw from 
+a multi-round algorithm until the algorithm terminates, and second, when agents can withdraw whenever they wish. 
+We now summarize our model and results.
+
+
+\parahead{Model}
+There are two competing agents, $\competitora$ and $\competitorb$, each possessing 
+collections of $\numdatab$ and $\numdataa$ 
+different goods
+respectively (e.g. quantity of data, number of hours an equipment can be lent).
+Both agents derive value from each others' goods based on the quantity
+received, quantified by sequences $\{\valai\}_{i\in[\numdataa]}$ and $\{\valbj\}_{j\in[\numdatab]}$,
+% $\vala:\cbr{0,\ldots,\numdataa}\rightarrow\RR$ and 
+% $\valb:\cbr{0,\ldots,\numdatab}\rightarrow\RR$,
+where $\valai$ is the value  of agent $a$ when she receives $i$ of $b$'s goods, and likewise for $\valbj$.
+An exchange 
+\(
+    \rbr{\exchangea,\exchangeb}
+    =
+    \exchange\in\setexchanges
+    =
+    \cbr{0,\ldots,n}\times\cbr{0,\ldots,m}
+\)
+corresponds to $\competitora$ receiving $\numdatafora$ of $\competitorb$'s resources and 
+$\competitorb$ receiving $\numdataforb$ of $\competitora$'s resources.
+For a particular exchange 
+\(
+    \exchange = \rbr{\exchangea,\exchangeb}
+    \in\setexchanges
+    % =
+    % \cbr{0,\ldots,n}\times\cbr{0,\ldots,m}
+\)
+let
+\(
+    \utilas = \utila\big(\valai,\valbj\big)
+\)
+and
+\(
+    \utilbs = \utilb\big(\valai,\valbj\big)
+\)
+% let $\utila:\setexchanges\rightarrow\RR$ and $\utilb:\setexchanges\rightarrow\RR$ denote
+be the utilities for both agents,
+where
+\(
+    \utila,\utilb:\RR^2\rightarrow\RR
+\)
+are functions mapping the value obtained by both competitors to their utilities.
+These interactions may be non-zero-sum (i.e. $\utilas \neq -\utilbs$), 
+and the utility gains for the agents may be asymmetric (one agent could benefit more from collaboration than the other).
+%Moreover, while the canonical setting of interest involves negative externalities due to competition (i.e., $\utila$ decreases in $\valbj$), our model does not preclude positive externalities (i.e., $\utila$ may increase with $\valbj$).
+
+We capture uncertainty in valuations by modeling $\vala$ and $\valb$ as independent random draws from \emph{known} distributions $\priora, \priorb$. Neither player observes their or the others' realized valuations $\valai$ and $\valbj$ for any $i,j$ until the corresponding goods have been exchanged.
+
+
+
+
+\subparahead{Welfare maximization under uncertainty}
+Let $\welfarefunc:\RR^2\rightarrow\RR$ be a known welfare function used to quantify the quality of an exchange
+$\exchange\in\setexchanges$ via $\welfarefunc\rbr{\utilas,\utilbs}$.
+Common examples include the egalitarian welfare~\citep{mas1995microeconomic} 
+$\welfarefunc(x,y)=\min(x,y)$, the 
+Nash welfare~\citep{nash1950bargaining} $W(x,y)=xy$, or the social welfare subject to individual rationality 
+$\welfarefunc(x,y)=(x+y)\cdot 1_{\cbr{x,y\geq 0}}$.
+We are interested in designing  
+algorithms in which a central planner (a trusted and neutral third party) facilitates an exchange $\exchange\in\setexchanges$ to maximize the welfare, while ensuring that both agents benefit from the exchange.
+
+A straightforward option is to choose the exchange $s$ which maximizes the ex ante welfare, i.e.
+$\argmax_{
+        \exchange\in\setexchanges
+    }
+    \EE[\welfarefunc(\utilas,\utilbs)      
+    ] $.
+However, instead of proposing a one time exchange, an alternative setting is where the planner proposes a sequence of incremental multi-round exchanges, with both competitors reporting their observed values after each round.
+By accounting for this feedback, it is possible to outperform the above ex ante baseline. This is demonstrated via the following example.
+
+
+\begin{restatable}{example}{multi-vs-single-round-alg}
+    \label{ex:multi-vs-single-round-alg}
+    \emph{
+    Let $\numdataa=\numdatab=1$, so $\setexchanges=\cbr{0,1}^2$. Suppose that each competitor's value for the other's good is 
+$\valaii{1},\valbjj{1}\drawniid\Bern(1/2)$ and assume $\valaii{0}=\valbjj{0}=0$.
+    Let the utilities and welfare be given by
+    \begin{align*}
+        \utilas
+        =
+        \valai-\frac{1}{4}\valbj,
+        \quad 
+        \utilbs
+        =
+        \valbj-\frac{1}{4}\valai,
+        \quad
+        \text{and}
+        \quad
+        \welfarefunc(x,y)=\min(x,y) .
+    \end{align*}  
+    A direct computation shows that 
+    $(1,1)\in\setexchanges$ is the single exchange that maximizes the expected welfare:
+    \begin{align*}
+        \argmax_{
+            \exchange\in\cbr{0,1}^2
+        }
+        \EE\sbr{
+            \min\rbr{
+                \utilas,\utilbs
+            }
+        } =
+                \rbr{1,1} 
+        \quad
+        \text{and}
+        \quad
+        \EE\sbr{
+            \min\rbr{
+                \utilass{(1,1)},\utilbss{(1,1)}
+            }
+        } 
+        =
+        \frac{1}{16} .
+    \end{align*}  
+    }
+
+    \emph{
+    Now consider a multi-exchange algorithm that works as follows. It first gives one agent the other's resource; without loss of generality assume 
+    $\competitora$ receives $\competitorb$'s resource. 
+    Competitor $\competitora$ is then asked to report their value of the received resource
+    (either $0$ or $1$). If $\competitora$ (truthfully) reports $1$, then $\competitorb$ is 
+    given $\competitora$'s resource. 
+    However, if $\competitora$ reports a $0$, then $\competitorb$ is given nothing.
+    Let $\exchange'=(i',j')\in\cbr{0,1}^2$
+    denote the final exchange in this algorithm. A direct computation shows that this algorithm achieves a higher expected welfare than the above static policy. We have:
+    \begin{align*}
+        \EE\sbr{
+            \min\rbr{
+                \utilass{s'},\utilbss{s'}
+            }
+        } 
+        &=
+        \EE\sbr{
+            \min\rbr{
+                \valaii{i'}
+                -
+                \frac{1}{4}
+                \valbjj{j'}
+                ,
+                \valbjj{j'}
+                -
+                \frac{1}{4}
+                \valaii{i'}
+            }
+        } 
+        \\
+        &=
+        \frac{1}{2}
+        \rbr{
+            \frac{1}{2}
+            \min\rbr{
+                1-\frac{1}{4}
+                ,
+                1-\frac{1}{4}
+            }
+            +
+            \frac{1}{2}
+            \min\rbr{
+                1-\frac{1}{4}
+                ,
+                -\frac{1}{4}
+            }
+        }
+        +
+        \frac{1}{2}\min(0,0)
+        % \\
+        % &=
+        =
+        \frac{1}{8} .
+    \end{align*}  
+    }
+\end{restatable}  
+
+
+\subparahead{An algorithm for resource exchange}
+Motivated by the above example, we study multi-round exchange algorithms that share goods incrementally over time. 
+An algorithm consists of a \emph{stopping rule} and an \emph{exchange recommendation rule}. In each round $t$, 
+the stopping rule determines whether the interaction continues or terminates. If it continues, the exchange 
+recommendation rule proposes an exchange $(i_{t}, j_{t}) \in \setexchanges$ such that $i_{t} \ge i_{t-1}$ and $j_{t} \ge j_{t-1}$, 
+with at least one of these inequalities holding strictly, i.e. at least one of the two agents receives an additional unit of the resource. 
+The agents realize the valuations $\valaii{i_t}$ and $\valbjj{j_t}$, report them (truthfully) to the exchange algorithm which 
+then uses this feedback to guide subsequent decisions.
+
+
+
+\parahead{Setting 1: Agents cannot withdraw early}
+In Section~\ref{sec:opt-non-ic-alg}, we first consider a setting where agents may choose to participate, but once they do, they cannot withdraw until the algorithm terminates. This restriction can be enforced via legal agreements or monetary penalties for early withdrawal.
+
+
+
+\subparahead{Challenges}
+Our setting introduces several challenges that do not arise in conventional resource-sharing protocols:
+\emph{(i)}
+In each round, the algorithm must make its decisions using only the information revealed by previous exchanges.
+\emph{(ii)}
+Decisions are irreversible: once goods have been shared, the original agent cannot reclaim those units.
+\emph{(iii)}
+The algorithm must account for competition between agents, as an exchange that improves one agent's outcome may reduce the other's.
+\emph{(iv)}
+These challenges are further compounded by the minimal assumptions we impose on valuation, utility, and welfare functions. For example, the random variables
+\(
+\{\valai\}_{\numdatafora=0}^{\numdataa}
+\)
+may be continuous, discrete, or arbitrarily correlated, and likewise for
+\(
+\{\valbj\}_{\numdataforb=0}^{\numdatab}
+\).
+The only assumption we impose on these random variables, as well as on the utility and welfare functions $\utilas$, $\utilbs$, and $\welfarefunc$, is boundedness.
+
+% As a result, predicting the welfare impact of future exchanges is inherently difficult, making it challenging to design algorithms that repeatedly propose sequences of ex ante optimal exchanges based solely on information revealed in prior rounds.
+
+
+
+
+\subparahead{Method and techniques}
+We can view an exchange algorithm as a policy for traversing the lattice 
+\(
+    \setexchanges
+    =
+    \cbr{0,\ldots,\numdataa}
+    \times
+    \cbr{0,\ldots,\numdatab}
+\), 
+starting at $(0,0)$ and moving only up/right at each step, using the information 
+reported from previous exchanges.
+Each such traversal corresponds to an increasing sequence of exchanges, representing that competitors
+cannot un-share resources.
+Our key insight is that we can use this reformulation to reduce the design of an optimal exchange
+algorithm to solving an optimal stopping time problem over the lattice $\setexchanges$~\citep{mandelbaum1981optimal}.
+At a high level, the algorithm works as follows. On each round, we determine which of the following three options would lead to 
+a higher expected welfare: (1) terminating the exchange, (2) giving $\competitora$ an additional one of 
+$\competitorb$'s resources and then ``proceeding optimally'', or (3) giving $\competitorb$ an additional one of $\competitora$'s
+resources and then ``proceeding optimally''.
+We compute the expected welfare of ``proceeding optimally'' after a given exchanged via a dynamic program.
+We show that under a simple assumption for $\welfarefunc$, that a non-negative expected welfare implies
+non-negative expected utilities,
+% is non-decreasing in agent valuations, 
+the resulting optimal algorithm is 
+also individually rational.
+
+
+
+\subparahead{Impossibility under strategic reporting of values}
+We assume that agents' valuations are reported truthfully or can be publicly verified by the central planner. 
+It is intuitive that this assumption is necessary: without it, an agent could under-report her realized value to influence future allocations, 
+either to receive more goods herself or to limit goods to her competitor. For example, in Example~\ref{ex:multi-vs-single-round-alg}, 
+the agent who receives the good first could always report $0$, even if she realized a value of $1$, to prevent the other from receiving the good. 
+Proposition~\ref{prop:opt-truthful-vs-opt-untruthful} formalizes this intuition, showing that the gap between the expected welfare of the optimal 
+multi-exchange algorithm and that of the optimal truthful algorithm can be unbounded.
+
+% Theorem XXX 
+
+% The following theorem shows this assumption is necessary:
+
+% \begin{restatable}{proposition}{opt-truthful-vs-opt-untruthful}
+% \label{prop:untruthfulreporting}
+% For any $M > 0$, there exists an instance 
+% such the ratio between the expected welfare of the optimal 
+% multi-exchange algorithm and that of the optimal truthful exchange algorithm is larger than $M$.
+% \end{restatable}
+
+% \kkcomment{Maybe, briefly outline proof idea here.}
+
+
+\parahead{Setting 2: Agents can withdraw early}
+Next, in Section~\ref{sec:opt-ic-alg}, we study a significantly more challenging setting in which agents can withdraw at any round, after which no further exchanges occur. We define \emph{incentive-compatible} (IC) exchange algorithms as those in which neither agent can benefit from leaving the exchange algorithm early.
+IC does not come for free: an agent may choose to exit if she is fortunate in an early round and anticipates that future exchanges are more 
+likely to benefit her competitor. For example, in Example~\ref{ex:multi-vs-single-round-alg}, the agent who receives the first good 
+could leave early after realizing a value of $1$, preventing her competitor from obtaining a good. Consequently, the only IC policies 
+are either to share nothing at all, yielding an expected utility of $0$, or to share both goods with both agents in the first round, yielding 
+an expected utility of $1/16$, both of which are strictly worse than the optimal algorithm when participants cannot withdraw early.
+
+
+% We explore the design of an optimal IC algorithm, and present conditions on the model under which techniques from optimal
+% stopping and martingale theory can be applied to do so.
+% We study how to design an optimal IC algorithm, and identify conditions on the model that allow us to use optimal 
+% stopping and martingale methods to characterize it.
+
+% We explore the design an optimal IC algorithm, and identify conditions on the model that allow us to use 
+% optimal stopping and martingale methods to characterize such an algorithm.
+We study designing an optimal IC algorithm and identify model conditions under which optimal 
+stopping and martingale methods can be used to characterize it.
+% We then give examples, illustrating the different challenges 
+% \kkcomment{@Alex: finish this part up.} 
+We also give examples showing the 
+different challenges at play that complicate the design of an optimal incentive compatible algorithm and why
+additional model assumptions are required to apply the aforementioned techniques. 
+
+
+\vspace{0.1in}
+
+\noindent
+Finally, we note that our model and results in both settings can be straightforwardly extended to multi-resource exchanges.  In this case, 
+competitor $a$ has $B_a$ ``buckets'' of resources with sizes $[m_1, m_2, \dots,$ $ m_{B_a}]$, and similarly for competitor $b$. 
+An exchange $(i_t, j_t)$ then corresponds to a pair of vectors specifying the number of goods exchanged from each bucket.
+
+% Finally, we note that our model and results extend naturally to multi-resource exchange settings, albeit with additional technical overhead. In this extension, each agent $a$ has $B_a$ resource ``buckets'' with capacities $[m_1, m_2, \dots, m_{B_a}]$, and similarly for agent $b$. An exchange $(i_t, j_t)$ is then specified by a pair of vectors indicating the number of goods transferred from each bucket.
+
+
+
+% \kkcomment{@Alex: is it possible to guarantee the following `stability' condition, where, when the algorithm terminates, the agents will have no incentive to exchange among themselves. If so, it would be good to prove it and also mention it in the summary.}
+% \mycomment{no, in the case that the welfare is misaligned, but I think yes for reasonable choices like the egalitatian welfare}
+
+\subsection{Related work}
+
+To the best of our knowledge, there is no prior work that directly addresses the problem we study. 
+However, our work is inspired by and contributes to several related lines of research on resource sharing and 
+exchange under uncertainty.
+
+\paragraph{Classical models for exchange and allocation.} 
+The allocation and exchange of resources among self-interested agents has a long history in economics. 
+Early work on matching and exchange problems investigates mechanisms for assigning or trading goods without monetary transfers~\citep{varian1973equity,walras1900elements,fisher1891mathematical}. 
+More broadly, mechanism design studies how to structure incentives so that agents reveal their true preferences, 
+with applications in resource allocation and matching markets~\citep{gale1962college,shapley1974cores,abdulkadiroglu1999house}.
+
+\paragraph{Exchange under uncertainty and learning.} 
+A recent line of work extends classical exchange models to settings where agent utilities or preferences 
+are uncertain and must be learned over time. These studies often leverage bandit and online learning techniques 
+to approach efficient equilibria in matching markets~\citep{guo2021learning,jagadeesan2021learning,liu2020competing}. 
+While these models typically do not consider direct competition and employ techniques distinct from ours, 
+they underscore the importance of incorporating uncertainty into the design of exchange mechanisms.
+
+
+\paragraph{Data sharing.} 
+Recent literature on data markets examines how firms share or trade data, 
+and how externalities influence outcomes. Some models explore optimal data auctions and mechanisms 
+where allocations create positive or negative externalities among buyers~\citep{agarwal2024towards,gu2022data,bonatti2024selling}. 
+Empirical work documents the emergence of data exchange agreements and the challenges of valuing data assets in practice~\citep{elsaify2021data}. 
+Other studies focus on designing protocols for sharing data among non-competitive agents, often emphasizing 
+fair contribution-based rewards~\citep{clintoncollaborative,sim2020collaborative,karimireddy2022mechanisms}.
+
+\paragraph{Optimal stopping in auction and mechanism design.} 
+Optimal stopping principles are widely used in  mechanism design, particularly in dynamic 
+and sequential allocation settings. In dynamic auctions, designers often face decisions about when to allocate 
+or price goods as agents' valuations or participation opportunities evolve; such problems naturally reduce 
+to stopping or recursive decision frameworks~\citep{ashlagi2016sequential,samuel1984comparison,lucier2017economic}. 
+Automated online mechanism design leverages optimal stopping and prophet inequalities to design approximately 
+optimal online auctions, where the choice to accept a bid or wait for future offers is analogous to a stopping rule~\citep{hajiaghayi2007automated}. 
+More broadly, our work connects to the study of \emph{dynamic mechanisms}, where goods are allocated across multiple stages. 
+\citet{pavan2014dynamic} established results for incentive compatibility in these settings, showing that 
+the stopping rule itself must be carefully designed to prevent manipulation of the timing of information disclosure. 
+However, unlike all of the above works, our setting requires accounting for competition between agents and designing optimal stopping over a  multi-dimensional state space: 
+the lattice of possible exchange quantities across competing agents.
+
+
+
+
+
+% \begin{enumerate}
+%     \item Intro
+%     \begin{enumerate}
+%         \item approx 3/4 pages describing real-world use cases
+%         \item 1.1 Model: environment
+%         \item 
+%     \end{enumerate}
+%     \item Model
+%     \begin{enumerate}
+%         \item Environment
+%         \item Examples to motivate the policies
+%         \item SEtting 1, desiderata
+%         \item Setting 2, desiderata
+%         \item Impossibility results (truthful reporting)
+%     \end{enumerate}
+%     \item Non-IC algo
+%     \item IC algo
+% \end{enumerate}
