@@ -6,6 +6,8 @@
 # Project instructions
 - Do not edit any files under data_sharing_with_comp_ec26/, I want this original paper copy preserved.
 - If you make edits, put them under new, cleanly organized and readable folders, make it easy for me to follow what is going on.
+- Don't create a bunch of useless junk scrap files unless there is a specific purpose in doing so.
+- For instance, scrap latex rendering is junk but math scratch work may not be.
 
 # Math instructions
 
