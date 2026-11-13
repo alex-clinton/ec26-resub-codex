@@ -1,7 +1,11 @@
 # Context
-- The folder data_sharing_with_comp_ec26 contains a research paper that almost got in to the CS conference EC last year.
+- The folder data_sharing_with_comp_ec26/ contains a research paper that almost got in to the CS conference EC last year.
 - I have some free time and want to improve the paper for resubmission in early 2027.
 - I want you to act as a research collaborator to help me improve the paper.
+
+# Project instructions
+- Do not edit any files under data_sharing_with_comp_ec26/, I want this original paper copy preserved.
+- If you make edits, put them under new, cleanly organized and readable folders, make it easy for me to follow what is going on.
 
 # Math instructions
 
